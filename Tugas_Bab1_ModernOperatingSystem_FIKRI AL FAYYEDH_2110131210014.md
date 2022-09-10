@@ -1035,3 +1035,1050 @@ Beberapa dari kartu ini dapat menangani beberapa applet Java secara bersamaan, y
 multiprogramming dan kebutuhan untuk menjadwalkannya. Manajemen dan perlindungan sumber daya juga menjadi masalah ketika dua atau lebih applet hadir secara bersamaan
 waktu. Masalah ini harus ditangani oleh operasi (biasanya sangat primitif).
 sistem yang ada pada kartu.
+
+## 1.5 KONSEP SISTEM OPERASI
+Sebagian besar sistem operasi menyediakan konsep dasar dan abstraksi tertentu seperti proses, ruang alamat, dan file yang penting untuk memahaminya. Dalam
+bagian berikut, kita akan melihat beberapa konsep dasar ini secara singkat, seperti sebuah pengantar. Kami akan kembali ke masing-masing dengan sangat rinci nanti dalam hal ini
+buku. Untuk mengilustrasikan konsep-konsep ini, dari waktu ke waktu, kami akan menggunakan contoh-contoh, yang umumnya diambil dari UNIX. Contoh serupa biasanya ada di sistem lain juga,
+namun, dan kami akan mempelajari beberapa di antaranya nanti.
+### 1.5.1 Proses
+Konsep kunci dalam semua sistem operasi adalah proses. Sebuah proses pada dasarnya adalah
+program dalam eksekusi. Terkait dengan setiap proses adalah ruang alamatnya, daftar
+lokasi memori dari 0 hingga maksimum, yang dapat dibaca dan ditulis oleh proses.
+Ruang alamat berisi program yang dapat dieksekusi, data program, dan
+tumpukan. Juga terkait dengan setiap proses adalah satu set sumber daya, biasanya termasuk:
+register (termasuk penghitung program dan penunjuk tumpukan), daftar file yang terbuka, alarm yang tidak aktif, daftar proses terkait, dan semua informasi lain yang diperlukan untuk
+menjalankan program. Sebuah proses pada dasarnya adalah wadah yang menampung semua informasi yang dibutuhkan untuk menjalankan sebuah program.
+Kami akan kembali ke konsep proses secara lebih rinci di Bab. 2. Untuk
+saat ini, cara termudah untuk mendapatkan perasaan intuitif yang baik untuk suatu proses adalah dengan berpikir
+tentang sistem multiprogram. Pengguna mungkin telah memulai program pengeditan video dan menginstruksikannya untuk mengonversi video berdurasi satu jam ke format tertentu (sesuatu .)
+yang bisa memakan waktu berjam-jam) dan kemudian pergi menjelajahi Web. Sementara itu, latar belakang
+proses yang bangun secara berkala untuk memeriksa email masuk mungkin sudah dimulai
+berlari. Jadi kami memiliki (setidaknya) tiga proses aktif: editor video, Web
+browser, dan penerima email. Secara berkala, sistem operasi memutuskan untuk berhenti
+menjalankan satu proses dan mulai menjalankan yang lain, mungkin karena yang pertama memiliki
+menghabiskan lebih dari porsi waktu CPU dalam satu atau dua detik terakhir.
+Ketika sebuah proses dihentikan sementara seperti ini, nanti harus di-restart dalam
+keadaan yang sama persis ketika dihentikan. Ini berarti bahwa semua informasi
+tentang proses harus secara eksplisit disimpan di suatu tempat selama penangguhan. Untuk
+misalnya, proses mungkin memiliki beberapa file yang terbuka untuk dibaca sekaligus. Terkait
+dengan masing-masing file ini adalah penunjuk yang memberikan posisi saat ini (yaitu, jumlah
+byte atau record yang akan dibaca selanjutnya). Ketika sebuah proses dihentikan sementara, semua
+pointer ini harus disimpan sehingga panggilan baca yang dijalankan setelah proses dimulai ulang akan membaca data yang benar. Di banyak sistem operasi, semua informasi tentang
+setiap proses, selain isi ruang alamatnya sendiri, disimpan dalam tabel sistem operasi yang disebut tabel proses, yang merupakan larik struktur, satu untuk
+setiap proses yang ada saat ini.
+Dengan demikian, proses (ditangguhkan) terdiri dari ruang alamatnya, biasanya disebut
+gambar inti (untuk menghormati memori inti magnetik yang digunakan di masa lalu), dan
+entri tabel proses, yang berisi isi registernya dan banyak lainnya
+item yang diperlukan untuk memulai kembali proses nanti.
+Panggilan sistem manajemen proses utama adalah panggilan yang berhubungan dengan penciptaan
+dan penghentian proses. Pertimbangkan contoh tipikal. Sebuah proses yang disebut
+juru bahasa perintah atau shell membaca perintah dari terminal. Pengguna baru saja mengetikkan perintah yang meminta program dikompilasi. Shell sekarang harus membuat proses baru yang akan menjalankan compiler. Ketika proses itu telah selesai,
+kompilasi, ia mengeksekusi panggilan sistem untuk mengakhiri dirinya sendiri.
+Jika suatu proses dapat membuat satu atau lebih proses lain (disebut sebagai proses anak) dan proses ini pada gilirannya dapat membuat proses anak, kita dengan cepat sampai pada
+struktur pohon proses Gambar 1-13. Proses terkait yang bekerja sama untuk
+menyelesaikan beberapa pekerjaan sering perlu berkomunikasi satu sama lain dan menyinkronkan
+kegiatan mereka. Komunikasi ini disebut komunikasi antarproses, dan
+akan dibahas secara rinci dalam Bab. 2.
+
+![](Gambar/12.png)
+
+Panggilan sistem proses lain tersedia untuk meminta lebih banyak memori (atau melepaskan
+memori yang tidak digunakan), tunggu proses anak untuk mengakhiri, dan overlay programnya
+dengan yang berbeda.
+Terkadang, ada kebutuhan untuk menyampaikan informasi ke proses yang sedang berjalan yaitu
+tidak duduk-duduk menunggu informasi ini. Misalnya, sebuah proses yang berkomunikasi dengan proses lain di komputer yang berbeda melakukannya dengan mengirimkan pesan ke proses jarak jauh melalui jaringan komputer. Untuk menjaga dari kemungkinan pesan atau balasannya hilang, pengirim dapat meminta agar sistem operasinya sendiri memberitahukannya setelah beberapa detik tertentu, sehingga dapat mengirim ulang.
+pesan jika belum ada pengakuan yang diterima. Setelah mengatur timer ini,
+program dapat terus melakukan pekerjaan lain.
+Ketika jumlah detik yang ditentukan telah berlalu, sistem operasi mengirim
+sinyal alarm untuk proses. Sinyal menyebabkan proses untuk sementara menangguhkan apa pun yang dilakukannya, menyimpan registernya di tumpukan, dan mulai menjalankan prosedur penanganan sinyal khusus, misalnya, untuk mengirim ulang pesan yang mungkin hilang. Ketika penangan sinyal selesai, proses yang berjalan dimulai ulang dalam keadaan
+itu tepat sebelum sinyal. Sinyal adalah analog perangkat lunak dari gangguan perangkat keras dan dapat dihasilkan oleh berbagai penyebab selain penghitung waktu yang kedaluwarsa.
+Banyak jebakan yang terdeteksi oleh perangkat keras, seperti mengeksekusi instruksi ilegal atau menggunakan
+alamat yang tidak valid, juga diubah menjadi sinyal untuk proses yang bersalah.
+Setiap orang yang berwenang untuk menggunakan sistem diberi UID (User IDentification) oleh administrator sistem. Setiap proses yang dimulai memiliki UID orang tersebut
+siapa yang memulainya. Proses anak memiliki UID yang sama dengan induknya. Pengguna dapat menjadi anggota grup, yang masing-masing memiliki GID (Group IDentification).Satu UID, disebut superuser (di UNIX), atau Administrator (di Windows),
+memiliki kekuatan khusus dan dapat mengesampingkan banyak aturan perlindungan. Di kios besar, hanya administrator sistem yang tahu kata sandi yang dibutuhkan untuk menjadi
+pengguna super, tetapi banyak dari pengguna biasa (terutama siswa) mencurahkan banyak hal
+upaya mencari kelemahan dalam sistem yang memungkinkan mereka menjadi superuser tanpa
+kata sandi.
+Kami akan mempelajari proses dan komunikasi antar proses di Bab. 2.
+### 1.5.2 Ruang Alamat
+Setiap komputer memiliki beberapa memori utama yang digunakan untuk menyimpan pro gram. Dalam sistem operasi yang sangat sederhana, hanya satu program dalam satu waktu yang ada di memori. Untuk menjalankan program kedua, yang pertama harus dihapus dan yang kedua
+ditempatkan dalam memori.
+Sistem operasi yang lebih canggih memungkinkan beberapa program berada di memori pada saat yang bersamaan. Agar mereka tidak saling mengganggu (dan dengan
+sistem operasi), diperlukan semacam mekanisme proteksi. Meskipun mekanisme ini harus ada di perangkat keras, mekanisme ini dikendalikan oleh sistem operasi.
+Sudut pandang di atas berkaitan dengan pengelolaan dan perlindungan memori utama komputer. Masalah terkait memori yang berbeda, tetapi sama pentingnya adalah
+mengelola ruang alamat proses. Biasanya, setiap proses memiliki beberapa set
+alamat yang dapat digunakan, biasanya berjalan dari 0 hingga beberapa maksimum. Dalam kasus yang paling sederhana, jumlah maksimum ruang alamat yang dimiliki suatu proses kurang dari
+memori utama. Dengan cara ini, suatu proses dapat mengisi ruang alamatnya dan akan ada
+cukup ruang di memori utama untuk menampung semuanya.
+Namun, pada banyak komputer alamat 32 atau 64 bit, memberikan alamat
+ruang 232 atau 264 byte, masing-masing. Apa yang terjadi jika suatu proses memiliki lebih banyak alamat
+ruang dari komputer memiliki memori utama dan proses ingin menggunakan semuanya? Di
+komputer pertama, proses seperti itu hanya kurang beruntung. Saat ini, ada teknik yang disebut memori virtual yang dipimpin, seperti yang disebutkan sebelumnya, di mana sistem operasi
+menyimpan sebagian dari ruang alamat di memori utama dan sebagian lagi di disk dan antar-jemput
+potongan bolak-balik di antara mereka sesuai kebutuhan. Intinya, sistem operasi
+menciptakan abstraksi ruang alamat sebagai kumpulan alamat yang mungkin dilakukan oleh suatu proses
+referensi. Ruang alamat dipisahkan dari memori fisik mesin
+dan mungkin lebih besar atau lebih kecil dari memori fisik. Pengelolaan ruang iklan dan memori fisik merupakan bagian penting dari apa yang beroperasi
+sistem tidak, jadi semua Chap. 3 dikhususkan untuk topik ini.
+### 1.5.3 File
+Konsep kunci lain yang didukung oleh hampir semua sistem operasi adalah file
+sistem. Seperti disebutkan sebelumnya, fungsi utama dari sistem operasi adalah untuk menyembunyikan
+kekhasan disk dan perangkat I/O lainnya dan memberi programmer model abstrak yang bagus dan bersih dari file yang tidak bergantung pada perangkat. Panggilan sistem jelas
+diperlukan untuk membuat file, menghapus file, membaca file, dan menulis file. Sebelum file dapat
+dibaca, itu harus ditempatkan di disk dan dibuka, dan setelah dibaca itu harus
+ditutup, jadi panggilan disediakan untuk melakukan hal-hal ini.
+Untuk menyediakan tempat menyimpan file, sebagian besar sistem operasi PC memiliki konsep
+direktori sebagai cara mengelompokkan file bersama-sama. Seorang siswa, misalnya, mungkin
+memiliki satu direktori untuk setiap kursus yang dia ambil (untuk program yang diperlukan untuk itu
+saja), direktori lain untuk surat elektroniknya, dan masih direktori lain untuknya
+Halaman beranda World Wide Web. Panggilan sistem kemudian diperlukan untuk membuat dan menghapus
+direktori. Panggilan juga disediakan untuk meletakkan file yang ada di direktori dan untuk memindahkan file dari direktori. Entri direktori dapat berupa file atau direktori lainnya. Model ini juga memunculkan hierarki — sistem file — seperti yang ditunjukkan pada
+Gambar 1-14.
+
+![](./Gambar/13.png)
+
+Proses dan hierarki file keduanya diatur sebagai pohon, tetapi kesamaannya
+berhenti di sana. Hirarki proses biasanya tidak terlalu dalam (lebih dari tiga level adalah
+tidak biasa), sedangkan hierarki file biasanya empat, lima, atau bahkan lebih banyak level
+dalam. Hirarki proses biasanya berumur pendek, umumnya paling banyak menit,
+sedangkan hierarki direktori mungkin ada selama bertahun-tahun. Kepemilikan dan perlindungan juga
+berbeda untuk proses dan file. Biasanya, hanya proses induk yang dapat mengontrol atau bahkan mengakses proses anak, tetapi mekanisme hampir selalu ada untuk memungkinkan file dan direktori dibaca oleh kelompok yang lebih luas daripada hanya pemiliknya.
+Setiap file dalam hierarki direktori dapat ditentukan dengan memberikan jalurnya
+nama dari bagian atas hierarki direktori, direktori root. Mutlak seperti itu
+nama path terdiri dari daftar direktori yang harus dilalui dari direktori root untuk sampai ke file, dengan garis miring memisahkan komponen. Pada Gambar 1-14,
+path untuk file CS101 adalah /Faculty/Prof.Brown/Courses/CS101. Garis miring di depan menunjukkan bahwa jalurnya mutlak, yaitu, dimulai dari direktori root. Sebagai tambahan, di
+Windows, karakter garis miring terbalik (\) digunakan sebagai pemisah, bukan garis miring (/)
+karakter (untuk alasan historis), sehingga jalur file yang diberikan di atas akan ditulis sebagai
+\Faculty\Prof.Brown\Courses\CS101. Sepanjang buku ini kita biasanya akan menggunakan
+konvensi UNIX untuk jalur.
+Setiap saat, setiap proses memiliki direktori kerja saat ini, di mana jalur
+nama yang tidak diawali dengan garis miring akan dicari. Misalnya, pada Gambar 1-14, jika
+/Faculty/Prof.Brown adalah direktori kerja, penggunaan jalur Courses/CS101
+akan menghasilkan file yang sama dengan nama path absolut yang diberikan di atas. Proses bisa
+ubah direktori kerja mereka dengan mengeluarkan panggilan sistem yang menentukan direktori kerja baru.
+Sebelum file dapat dibaca atau ditulis, file itu harus dibuka, pada saat itu per misi diperiksa. Jika akses diizinkan, sistem mengembalikan bilangan bulat kecil
+disebut deskriptor file untuk digunakan dalam operasi selanjutnya. Jika aksesnya dilarang,
+kode kesalahan dikembalikan.
+Konsep penting lainnya di UNIX adalah sistem file yang di-mount. Kebanyakan desktop
+komputer memiliki satu atau lebih drive optik di mana CD-ROM, DVD, dan cakram Blu ray dapat dimasukkan. Mereka hampir selalu memiliki port USB, di mana USB
+memory stick (benar-benar, solid state disk drive) dapat dipasang, dan beberapa komputer
+memiliki floppy disk atau hard disk eksternal. Untuk memberikan cara yang elegan untuk berurusan dengan
+media yang dapat dilepas ini UNIX memungkinkan sistem file pada disk optik untuk dilampirkan ke pohon utama. Pertimbangkan situasi Gambar 1-15(a). Sebelum gunung
+panggilan, sistem file root, pada hard disk, dan sistem file kedua, pada CD ROM, terpisah dan tidak terkait.
+Namun, sistem file pada CD-ROM tidak dapat digunakan, karena tidak ada
+cara untuk menentukan nama jalur di atasnya. UNIX tidak mengizinkan nama jalur untuk diawali
+dengan nama atau nomor drive; itu akan menjadi jenis ketergantungan perangkat
+yang harus dihilangkan oleh sistem operasi. Sebaliknya, panggilan sistem mount memungkinkan
+sistem file pada CD-ROM untuk dilampirkan ke sistem file root di mana pun
+program menginginkannya. Pada Gambar 1-15(b) sistem file pada CD-ROM telah
+dipasang pada direktori b, sehingga memungkinkan akses ke file /b/x dan /b/y. Jika direktori b
+berisi file apa pun yang tidak akan dapat diakses saat CD-ROM
+mount, karena /b akan merujuk ke direktori root CD-ROM. (Tidak menjadi
+dapat mengakses file-file ini tidak seserius kelihatannya: sistem file hampir
+selalu dipasang pada direktori kosong.) Jika sistem berisi banyak hard disk,
+mereka semua dapat dipasang ke dalam satu pohon juga.
+
+![](Gambar/14.png)
+
+Konsep penting lainnya dalam UNIX adalah file khusus. File khusus disediakan untuk membuat perangkat I/O terlihat seperti file. Dengan begitu, mereka dapat dibaca dan
+ditulis menggunakan panggilan sistem yang sama seperti yang digunakan untuk membaca dan menulis file. Dua
+jenis file khusus yang ada: blok file khusus dan file karakter khusus. Memblokir
+file khusus digunakan untuk memodelkan perangkat yang terdiri dari kumpulan blok yang dapat disesuaikan secara acak, seperti disk. Dengan membuka file khusus blok dan membaca, katakanlah,
+blok 4, sebuah program dapat langsung mengakses blok keempat pada perangkat, tanpa
+berkaitan dengan struktur sistem file yang terdapat di dalamnya. Demikian pula, file khusus karakter digunakan untuk memodelkan printer, modem, dan perangkat lain yang menerima atau mengeluarkan aliran karakter. Berdasarkan konvensi, file khusus disimpan di direktori /dev. Misalnya, /dev/lp mungkin adalah printer (dulu disebut printer baris).
+Fitur terakhir yang akan kita bahas dalam ikhtisar ini berkaitan dengan proses dan
+file: pipa. Pipe adalah semacam pseudofile yang dapat digunakan untuk menghubungkan dua proses, seperti yang ditunjukkan pada Gambar 1-16. Jika proses A dan B ingin berbicara menggunakan pipa, mereka
+harus mengaturnya terlebih dahulu. Ketika proses A ingin mengirim data ke proses B, ia menulis:
+pada pipa seolah-olah itu adalah file output. Sebenarnya, implementasi pipa adalah
+sangat mirip dengan file. Proses B dapat membaca data dengan membaca dari pipa
+seolah-olah itu adalah file input. Jadi, komunikasi antar proses di UNIX
+terlihat sangat mirip dengan file biasa yang membaca dan menulis. Lebih kuat lagi, satu-satunya cara
+proses dapat menemukan bahwa file output yang digunakan untuk menulis bukan benar-benar file, tetapi sebuah
+pipa, adalah dengan membuat panggilan sistem khusus. Sistem file sangat penting. Kami akan
+memiliki lebih banyak untuk dikatakan tentang mereka di Bab. 4 dan juga di Bab. 10 dan 11.
+
+![](Gambar/15.png)
+
+### 1.5.4 Masukan/Keluaran
+Semua komputer memiliki perangkat fisik untuk memperoleh input dan menghasilkan output.
+Lagi pula, apa gunanya komputer jika pengguna tidak tahu apa yang harus dilakukan
+dan tidak bisa mendapatkan hasil setelah melakukan pekerjaan yang diminta? Banyak jenis masukan
+dan perangkat output ada, termasuk keyboard, monitor, printer, dan sebagainya. Dia
+hingga sistem operasi untuk mengelola perangkat ini.
+Akibatnya, setiap sistem operasi memiliki subsistem I/O untuk mengelolanya
+perangkat I/O. Beberapa perangkat lunak I/O tidak bergantung pada perangkat, yaitu berlaku untuk
+banyak atau semua perangkat I/O sama baiknya. Bagian lain darinya, seperti driver perangkat, adalah
+khusus untuk perangkat I/O tertentu. Dalam Bab. 5 kita akan melihat perangkat lunak I/O.
+### 1.5.5 Perlindungan
+Komputer berisi sejumlah besar informasi yang sering ingin dilindungi dan dijaga kerahasiaannya oleh pengguna. Informasi ini mungkin termasuk email, rencana bisnis, pajak
+kembali, dan banyak lagi. Terserah sistem operasi untuk mengelola keamanan sistem sehingga file, misalnya, hanya dapat diakses oleh pengguna yang berwenang.
+Sebagai contoh sederhana, hanya untuk mendapatkan gambaran tentang cara kerja keamanan, pertimbangkan
+UNIX. File di UNIX dilindungi dengan memberikan masing-masing kode proteksi biner 9-bit. Kode perlindungan terdiri dari tiga bidang 3-bit, satu untuk pemilik, satu
+untuk anggota lain dari grup pemilik (pengguna dibagi menjadi beberapa grup oleh administrator sistem), dan satu untuk semua orang. Setiap bidang memiliki sedikit untuk akses baca,
+sedikit untuk akses tulis, dan sedikit untuk akses eksekusi. 3 bit ini dikenal sebagai
+rwx bit. Misalnya, kode perlindungan rwxr-x--x berarti pemiliknya dapat
+membaca, menulis, atau mengeksekusi file, anggota grup lain dapat membaca atau mengeksekusi (tetapi tidak
+menulis) file, dan semua orang dapat mengeksekusi (tetapi tidak membaca atau menulis) file. Untuk sebuah
+direktori, x menunjukkan izin pencarian. Tanda hubung berarti bahwa per misi yang sesuai tidak ada.
+Selain perlindungan file, ada banyak masalah keamanan lainnya. Melindungi
+sistem dari penyusup yang tidak diinginkan, baik manusia maupun bukan manusia (misalnya, virus) adalah
+salah satu diantara mereka. Kita akan melihat berbagai masalah keamanan di Bab. 9.
+### 1.5.6 Kulitnya
+Sistem operasi adalah kode yang melakukan panggilan sistem. Editor,
+compiler, assembler, linker, program utilitas, dan interpreter perintah jelas bukan bagian dari sistem operasi, meskipun mereka penting dan berguna. Dengan risiko agak membingungkan, di bagian ini kita akan melihat secara singkat
+di penerjemah perintah UNIX, shell. Meskipun bukan bagian dari sistem operasi, ia menggunakan banyak fitur sistem operasi dan dengan demikian berfungsi
+sebagai contoh yang baik tentang bagaimana panggilan sistem digunakan. Ini juga merupakan antarmuka utama antara pengguna yang duduk di terminalnya dan sistem operasi, kecuali pengguna tersebut
+menggunakan antarmuka pengguna grafis. Banyak shell yang ada, termasuk sh, csh, ksh, dan bash.
+Semuanya mendukung fungsionalitas yang dijelaskan di bawah, yang berasal dari shell asli (sh).
+Ketika ada pengguna yang masuk, shell dimulai. Shell memiliki terminal sebagai input standar dan output standar. Ini dimulai dengan mengetik prompt, karakter
+seperti tanda dolar, yang memberi tahu pengguna bahwa shell sedang menunggu untuk menerima perintah. Jika pengguna sekarang mengetik
+tanggal
+misalnya, shell membuat proses anak dan menjalankan program tanggal sebagai
+anak. Saat proses anak sedang berjalan, shell menunggunya untuk dihentikan. Kapan
+anak selesai, shell mengetik prompt lagi dan mencoba membaca input berikutnya
+garis.
+Pengguna dapat menentukan bahwa output standar diarahkan ke file, misalnya,tanggal >berkas
+Demikian pula, input standar dapat diarahkan, seperti pada
+urutkan t <file1 >file2
+yang memanggil program sortir dengan input diambil dari file1 dan output dikirim ke file2.
+Output dari satu program dapat digunakan sebagai input untuk program lain dengan:
+menghubungkannya dengan pipa. Dengan demikian
+cat file1 file2 file3 | sort >/dev/lp
+memanggil program cat untuk menggabungkan tiga file dan mengirim output untuk diurutkan ke
+mengatur semua baris dalam urutan abjad. Output dari sort diarahkan ke file
+/dev/lp, biasanya printer.
+Jika pengguna meletakkan ampersand setelah perintah, shell tidak menunggu sampai
+menyelesaikan. Sebaliknya itu hanya memberikan prompt segera. Akibatnya,
+cat file1 file2 file3 | urutkan >/dev/lp &
+memulai pengurutan sebagai pekerjaan latar belakang, memungkinkan pengguna untuk terus bekerja atau tidak sementara pengurutan sedang berlangsung. Shell memiliki sejumlah fitur menarik lainnya, yang tidak dapat kami bahas di sini. Sebagian besar buku tentang UNIX membahas
+cangkang agak panjang (misalnya, Kernighan dan Pike, 1984; Quigley, 2004; Robbins,
+2005).
+Sebagian besar komputer pribadi saat ini menggunakan GUI. Faktanya, GUI hanyalah sebuah program yang berjalan di atas sistem operasi, seperti sebuah shell. Dalam sistem Linux, ini
+fakta menjadi jelas karena pengguna memiliki pilihan (setidaknya) dua GUI: Gnome
+dan KDE atau tidak sama sekali (menggunakan jendela terminal pada X11). Di Windows, itu juga
+mungkin untuk mengganti desktop GUI standar (Windows Explorer) dengan yang berbeda
+program dengan mengubah beberapa nilai dalam registri, meskipun hanya sedikit orang yang melakukan ini.
+
+### 1.5.7 Ontogeni Merekapitulasi Filogeni
+Setelah buku Charles Darwin On the Origin of the Species diterbitkan,
+Ahli zoologi Jerman Ernst Haeckel menyatakan bahwa ''ontogeni merekapitulasi filogeni.''
+Dengan ini dia bermaksud bahwa perkembangan embrio (ontogeni) mengulangi (yaitu, reca pitulates) evolusi spesies (filogeni). Dengan kata lain, setelah pembuahan, telur manusia melewati tahapan menjadi ikan, babi, dan seterusnya sebelum berubah menjadi bayi manusia. Ahli biologi modern menganggap ini sebagai penyederhanaan kasar, tapi
+itu masih memiliki inti kebenaran di dalamnya.
+Sesuatu yang samar-samar analog telah terjadi di industri komputer. Setiap
+spesies baru (mainframe, komputer mini, komputer pribadi, genggam, tertanam
+komputer, kartu pintar, dll) tampaknya melalui perkembangan yang nenek moyangnya
+dilakukan, baik dalam perangkat keras maupun perangkat lunak. Kita sering melupakan banyak hal yang terjadi
+dalam bisnis komputer dan banyak bidang lainnya didorong oleh teknologi. Alasannya
+orang Romawi kuno tidak memiliki mobil bukan karena mereka sangat suka berjalan kaki. Itu karena mereka tidak tahu bagaimana membuat mobil. Komputer pribadi ada bukan karena
+jutaan orang memiliki keinginan terpendam selama berabad-abad untuk memiliki komputer, tetapi karena sekarang mungkin untuk memproduksinya dengan murah. Kita sering lupa betapa
+teknologi mempengaruhi pandangan kita tentang sistem dan hal ini layak untuk direfleksikan dari
+waktu demi waktu.
+Secara khusus, sering terjadi bahwa perubahan teknologi membuat beberapa
+ide usang dan dengan cepat menghilang. Namun, perubahan lain dalam teknologi
+bisa menghidupkannya kembali. Ini terutama benar ketika perubahan itu berkaitan dengan
+kinerja relatif dari berbagai bagian sistem. Misalnya, ketika CPU
+menjadi jauh lebih cepat daripada kenangan, cache menjadi penting untuk mempercepat
+memori ''lambat''. Jika teknologi memori baru suatu hari nanti membuat banyak kenangan
+lebih cepat dari CPU, cache akan hilang. Dan jika teknologi CPU baru membuatnya
+lebih cepat dari memori lagi, cache akan muncul kembali. Dalam biologi, kepunahan adalah selamanya,
+tetapi dalam ilmu komputer, kadang-kadang hanya untuk beberapa tahun.
+Sebagai konsekuensi dari ketidakkekalan ini, dalam buku ini kita dari waktu ke waktu akan
+waktu melihat konsep ''usang'', yaitu ide-ide yang tidak optimal dengan saat ini
+teknologi. Namun, perubahan dalam teknologi dapat membawa kembali beberapa
+apa yang disebut ''konsep usang.'' Untuk alasan ini, penting untuk memahami mengapa a
+konsep sudah usang dan perubahan lingkungan apa yang mungkin membawanya kembali.
+Untuk memperjelas poin ini, mari kita perhatikan contoh sederhana. Komputer awal
+memiliki set instruksi bawaan. Instruksi dieksekusi langsung oleh perangkat keras dan tidak dapat diubah. Kemudian datanglah microprogramming (pertama kali diperkenalkan pada
+skala besar dengan IBM 360), di mana penerjemah yang mendasarinya melakukan
+'' instruksi perangkat keras '' dalam perangkat lunak. Eksekusi bawaan menjadi usang. Dia
+tidak cukup fleksibel. Kemudian komputer RISC ditemukan, dan pemrograman mikro (yaitu, eksekusi yang ditafsirkan) menjadi usang karena eksekusi langsung
+lebih cepat. Sekarang kita melihat kebangkitan tafsir dalam bentuk Jawa
+applet yang dikirim melalui Internet dan ditafsirkan pada saat kedatangan. Kecepatan eksekusi tidak selalu penting karena penundaan jaringan sangat besar sehingga cenderung mendominasi. Dengan demikian pendulum telah berayun beberapa siklus antara eksekusi langsung dan interpretasi dan mungkin masih berayun lagi di masa depan.
+Kenangan Besar
+Sekarang mari kita periksa beberapa perkembangan historis dalam perangkat keras dan bagaimana mereka
+telah mempengaruhi perangkat lunak berulang kali. Mainframe pertama memiliki memori yang terbatas. SEBUAH
+IBM 7090 atau 7094 yang terisi penuh, yang berperan sebagai raja gunung dari akhir tahun 1959
+sampai tahun 1964, hanya memiliki lebih dari 128 KB memori. Itu sebagian besar diprogram dalam bahasa rakitan dan sistem operasinya ditulis dalam bahasa rakitan untuk menyimpan
+memori berharga.
+Seiring berjalannya waktu, kompiler untuk bahasa seperti FORTRAN dan COBOL mendapat
+cukup baik sehingga bahasa assembly diucapkan mati. Tapi ketika pertama
+komputer mini komersial (PDP-1) dirilis, hanya memiliki 4096 kata 18-bit
+memori, dan bahasa rakitan membuat kejutan kembali. Akhirnya, komputer mini memperoleh lebih banyak memori dan bahasa tingkat tinggi menjadi lazim di
+mereka.
+Ketika mikrokomputer muncul pada awal 1980-an, yang pertama memiliki memori 4-KB dan pemrograman bahasa rakitan bangkit dari kematian. Komputer tertanam sering menggunakan chip CPU yang sama dengan mikrokomputer (8080, Z80, dan
+kemudian 8086s) dan juga diprogram dalam assembler pada awalnya. Sekarang keturunan mereka, komputer pribadi, memiliki banyak memori dan diprogram dalam C,
+C++, Java, dan bahasa tingkat tinggi lainnya. Kartu pintar mengalami hal serupa
+pengembangan, meskipun di luar ukuran tertentu, kartu pintar sering memiliki Java
+penerjemah dan menjalankan program Java secara interpretatif, daripada membuat Java menjadi
+dikompilasi ke bahasa mesin kartu pintar.
+Perangkat Keras Perlindungan
+Mainframe awal, seperti IBM 7090/7094, tidak memiliki perangkat keras perlindungan, jadi
+mereka hanya menjalankan satu program pada satu waktu. Program buggy dapat menghapus sistem operasi dan dengan mudah membuat mesin crash. Dengan diperkenalkannya IBM 360, a
+bentuk primitif perlindungan perangkat keras menjadi tersedia. Mesin ini bisa
+kemudian simpan beberapa program di memori secara bersamaan dan biarkan mereka bergiliran
+berjalan (multiprogram). Monoprogramming dinyatakan usang.
+Setidaknya sampai komputer mini pertama muncul—tanpa perangkat keras proteksi—jadi multiprogramming tidak mungkin dilakukan. Meskipun PDP-1 dan PDP-8
+tidak memiliki perangkat keras proteksi, akhirnya PDP-11 melakukannya, dan fitur ini menghasilkan multiprogramming dan akhirnya ke UNIX.
+Ketika mikrokomputer pertama dibuat, mereka menggunakan chip CPU Intel 8080,
+yang tidak memiliki perlindungan perangkat keras, jadi kami kembali ke pemrograman tunggal—satu
+program dalam memori pada suatu waktu. Tidak sampai chip Intel 80286 yang melindungi perangkat keras ditambahkan dan multiprogramming menjadi mungkin. Sampai hari ini, banyak
+sistem tertanam tidak memiliki perangkat keras perlindungan dan hanya menjalankan satu program.
+Sekarang mari kita lihat sistem operasi. Mainframe pertama awalnya tidak memiliki
+perangkat keras perlindungan dan tidak ada dukungan untuk multiprogramming, sehingga mereka menjalankan sistem operasi sederhana yang menangani satu program yang dimuat secara manual pada satu waktu. Kemudian mereka memperoleh dukungan perangkat keras dan sistem operasi untuk menangani banyak program di
+sekali, dan kemudian kemampuan timesharing penuh.
+Ketika komputer mini pertama kali muncul, mereka juga tidak memiliki perangkat keras perlindungan dan
+menjalankan satu program yang dimuat secara manual pada satu waktu, meskipun multiprogramming adalah
+mapan di dunia mainframe saat itu. Secara bertahap, mereka memperoleh perangkat keras perlindungan dan kemampuan untuk menjalankan dua atau lebih program sekaligus. Pertama
+mikrokomputer juga hanya mampu menjalankan satu program pada satu waktu, tetapi kemudian
+memperoleh kemampuan untuk multiprogram. Komputer genggam dan kartu pintar pergi
+rute yang sama.
+Dalam semua kasus, pengembangan perangkat lunak ditentukan oleh teknologi. Pertama
+mikrokomputer, misalnya, memiliki memori sekitar 4 KB dan tidak ada perangkat keras perlindungan. Bahasa tingkat tinggi dan multiprogramming terlalu berlebihan
+untuk sistem sekecil itu untuk ditangani. Ketika mikrokomputer berevolusi menjadi komputer pribadi modern, mereka memperoleh perangkat keras yang diperlukan dan kemudian perangkat lunak yang diperlukan untuk menangani fitur yang lebih canggih. Kemungkinan besar perkembangan ini akan terus berlanjut selama bertahun-tahun yang akan datang. Bidang lain mungkin juga memiliki roda reinkarnasi ini, tapi
+di industri komputer tampaknya berputar lebih cepat.
+Disk
+Mainframe awal sebagian besar berbasis pita magnetik. Mereka akan membaca dalam program dari kaset, mengkompilasinya, menjalankannya, dan menulis hasilnya kembali ke kaset lain. Di sana
+tidak ada disk dan tidak ada konsep sistem file. Itu mulai berubah ketika IBM
+memperkenalkan hard disk pertama—RAMAC (RANdoM ACcess) pada tahun 1956. Ini menempati sekitar 4 meter persegi luas lantai dan dapat menyimpan 5 juta karakter 7-bit, cukup untuk satu foto digital resolusi menengah. Tapi dengan biaya sewa tahunan
+dari $ 35.000, merakit cukup untuk menyimpan setara dengan rol film yang didapat
+mahal cukup cepat. Tapi akhirnya harga turun dan sistem file primitif
+dikembangkan.
+Khas dari pengembangan baru ini adalah CDC 6600, diperkenalkan pada tahun 1964 dan
+selama bertahun-tahun komputer tercepat di dunia. Pengguna dapat membuat apa yang disebut
+''file permanen'' dengan memberi mereka nama dan berharap tidak ada pengguna lain yang juga
+memutuskan bahwa, katakanlah, ''data'' adalah nama yang cocok untuk sebuah file. Ini adalah direktori tingkat tunggal. Akhirnya, mainframe mengembangkan sistem file hierarkis yang kompleks, mungkin berpuncak pada sistem file MULTICS.
+Ketika komputer mini mulai digunakan, mereka akhirnya juga memiliki hard disk. Itu
+disk standar pada PDP-11 ketika diperkenalkan pada tahun 1970 adalah disk RK05,
+dengan kapasitas 2,5 MB, sekitar setengah dari IBM RAMAC, tetapi hanya sekitar Diameter 40 cm dan tinggi 5 cm. Tapi itu juga memiliki direktori tingkat tunggal pada awalnya.
+Ketika mikrokomputer keluar, CP/M pada awalnya merupakan sistem operasi yang dominan, dan juga hanya mendukung satu direktori pada (floppy) disk.
+Memori Virtual
+Memori virtual (dibahas di Bab 3) memberikan kemampuan untuk menjalankan program yang lebih besar
+dari memori fisik mesin dengan cepat memindahkan potongan-potongan menjadi tween RAM dan disk. Itu mengalami perkembangan serupa, pertama kali muncul di
+mainframe, lalu pindah ke mini dan mikro. Memori virtual juga memungkinkan ed memiliki tautan program secara dinamis di perpustakaan pada saat dijalankan alih-alih memilikinya
+dikompilasi. MULTICS adalah sistem pertama yang mengizinkan ini. Akhirnya ide
+disebarkan ke bawah garis dan sekarang banyak digunakan di sebagian besar UNIX dan Windows
+sistem.
+Dalam semua perkembangan ini, kami melihat ide-ide diciptakan dalam satu konteks dan kemudian
+dibuang ketika konteksnya berubah (pemrograman bahasa rakitan, tata bahasa monopro, direktori tingkat tunggal, dll.) hanya untuk muncul kembali dalam konteks yang berbeda
+sering satu dekade kemudian. Untuk alasan ini dalam buku ini kita kadang-kadang akan melihat ide-ide
+dan algoritme yang mungkin tampak kuno pada PC gigabyte saat ini, tetapi mungkin akan segera
+kembali pada komputer tertanam dan kartu pintar.
+## 1.6 PANGGILAN SISTEM
+Kita telah melihat bahwa sistem operasi memiliki dua fungsi utama: menyediakan
+abstraksi ke program pengguna dan mengelola sumber daya komputer. Untuk sebagian besar
+bagian, interaksi antara program pengguna dan sistem operasi berhubungan dengan
+mantan; misalnya membuat, menulis, membaca, dan menghapus file. Bagian re source-management sebagian besar transparan bagi pengguna dan dilakukan secara otomatis.
+Dengan demikian, antarmuka antara program pengguna dan sistem operasi terutama
+tentang berurusan dengan abstraksi. Untuk benar-benar memahami apa itu sistem operasi
+lakukan, kita harus memeriksa antarmuka ini dengan cermat. Panggilan sistem yang tersedia di antarmuka bervariasi dari satu sistem operasi ke sistem operasi lainnya (walaupun konsep dasarnya
+cenderung mirip).
+Dengan demikian kami dipaksa untuk membuat pilihan antara (1) generalisasi yang tidak jelas (''sistem operasi memiliki panggilan sistem untuk membaca file'') dan (2) beberapa sistem tertentu
+(''UNIX memiliki panggilan sistem baca dengan tiga parameter: satu untuk menentukan file, satu
+untuk memberi tahu di mana data harus diletakkan, dan satu untuk memberi tahu berapa byte yang harus dibaca'').
+Kami telah memilih pendekatan yang terakhir. Lebih banyak pekerjaan seperti itu, tetapi memberi lebih banyak
+wawasan tentang apa yang sebenarnya dilakukan sistem operasi. Meskipun diskusi ini secara khusus
+mengacu pada POSIX (Standar Internasional 9945-1), maka juga untuk UNIX, Sistem V,
+BSD, Linux, MINIX 3, dan seterusnya, sebagian besar sistem operasi modern lainnya memiliki panggilan sistem yang menjalankan fungsi yang sama, meskipun detailnya berbeda. Sejak yang sebenarnya mekanisme mengeluarkan panggilan sistem sangat bergantung pada mesin dan sering kali harus
+diekspresikan dalam kode perakitan, perpustakaan prosedur disediakan untuk memungkinkannya
+untuk membuat panggilan sistem dari program C dan sering juga dari bahasa lain.
+Hal ini berguna untuk mengingat hal berikut. Setiap komputer dengan CPU tunggal hanya dapat mengeksekusi satu instruksi pada satu waktu. Jika suatu proses menjalankan program pengguna di pengguna
+mode dan membutuhkan layanan sistem, seperti membaca data dari file, itu harus dijalankan
+instruksi perangkap untuk mentransfer kontrol ke sistem operasi. Sistem operasi
+kemudian mencari tahu apa yang diinginkan oleh proses pemanggilan dengan memeriksa parameternya. Kemudian
+itu melakukan panggilan sistem dan mengembalikan kontrol ke instruksi yang mengikuti
+panggilan sistem. Dalam arti tertentu, membuat panggilan sistem seperti membuat jenis panggilan prosedur khusus, hanya panggilan sistem yang masuk ke kernel dan panggilan prosedur tidak.
+Untuk membuat mekanisme panggilan sistem lebih jelas, mari kita lihat sekilas bacaannya
+panggilan sistem. Seperti disebutkan di atas, ia memiliki tiga parameter: yang pertama menentukan
+file, yang kedua menunjuk ke buffer, dan yang ketiga memberikan nomor
+byte untuk dibaca. Seperti hampir semua panggilan sistem, ia dipanggil dari program C dengan memanggil prosedur perpustakaan dengan nama yang sama dengan panggilan sistem: baca. Panggilan dari
+Program C mungkin terlihat seperti ini:
+count = read(fd, buffer, nbytes);
+Panggilan sistem (dan prosedur perpustakaan) mengembalikan jumlah byte sebenarnya
+membaca dalam hitungan. Nilai ini biasanya sama dengan nbyte, tetapi mungkin lebih kecil, jika,
+misalnya, end-of-file ditemui saat membaca.
+Jika panggilan sistem tidak dapat dilakukan karena parameter atau disk yang tidak valid
+kesalahan, hitungan diatur ke 1, dan nomor kesalahan dimasukkan ke dalam variabel global, errno.
+Program harus selalu memeriksa hasil panggilan sistem untuk melihat apakah terjadi kesalahan.
+Panggilan sistem dilakukan dalam serangkaian langkah. Untuk memperjelas konsep ini,
+mari kita periksa panggilan baca yang dibahas di atas. Dalam persiapan untuk memanggil prosedur read li brary, yang sebenarnya membuat panggilan sistem baca, program panggilan
+pertama mendorong parameter ke tumpukan, seperti yang ditunjukkan pada langkah 1-3 pada Gambar. 1-17.
+Kompiler C dan C++ mendorong parameter ke tumpukan dalam urutan terbalik untuk
+alasan historis (berkaitan dengan membuat parameter pertama ke printf, string for mat, muncul di atas tumpukan). Parameter pertama dan ketiga disebut dengan
+nilai, tetapi parameter kedua dilewatkan dengan referensi, yang berarti bahwa alamat dari
+buffer (ditunjukkan oleh &) dilewatkan, bukan isi buffer. Kemudian datang
+panggilan sebenarnya ke prosedur perpustakaan (langkah 4). Instruksi ini adalah instruksi prosedur dure-call normal yang digunakan untuk memanggil semua prosedur.
+Prosedur perpustakaan, mungkin ditulis dalam bahasa rakitan, biasanya menempatkan:
+nomor panggilan sistem di tempat yang diharapkan oleh sistem operasi, seperti:
+mendaftar (langkah 5). Kemudian mengeksekusi instruksi TRAP untuk beralih dari mode pengguna ke
+mode kernel dan mulai eksekusi pada alamat tetap di dalam kernel (langkah 6). Itu
+Instruksi TRAP sebenarnya cukup mirip dengan instruksi procedure-call di
+
+![](Gambar/16.png)
+
+merasakan bahwa instruksi yang mengikutinya diambil dari lokasi yang jauh dan kembali
+alamat disimpan di tumpukan untuk digunakan nanti.
+Namun demikian, instruksi TRAP juga berbeda dari instruksi pemanggilan prosedur dalam dua hal mendasar. Pertama, sebagai efek samping, ia beralih ke mode kernel.
+Instruksi panggilan prosedur tidak mengubah mode. Kedua, daripada memberikan alamat relatif atau absolut di mana prosedur berada, instruksi TRAP tidak dapat melompat ke alamat sembarang. Tergantung pada arsitekturnya, entah itu
+melompat ke satu lokasi tetap atau ada bidang 8-bit dalam pemberian instruksi
+indeks ke dalam tabel di memori yang berisi alamat lompatan, atau yang setara.
+Kode kernel yang mulai mengikuti TRAP memeriksa nomor panggilan sistem dan kemudian mengirimkan ke pengendali panggilan sistem yang benar, biasanya melalui tabel
+pointer ke penangan panggilan sistem yang diindeks pada nomor panggilan sistem (langkah 7). Saat itu
+arahkan pengendali panggilan sistem berjalan (langkah 8). Setelah menyelesaikan pekerjaannya, kontrol
+dapat dikembalikan ke prosedur perpustakaan ruang pengguna dengan instruksi berikut:
+instruksi TRAP (langkah 9). Prosedur ini kemudian kembali ke program pengguna di
+prosedur cara biasa memanggil kembali (langkah 10).
+Untuk menyelesaikan pekerjaan, program pengguna harus membersihkan tumpukan, seperti yang dilakukan setelahnya
+setiap panggilan prosedur (langkah 11). Dengan asumsi tumpukan tumbuh ke bawah, seperti yang sering terjadi tidak, kode yang dikompilasi menambah penunjuk tumpukan cukup tepat untuk menghapus
+parameter didorong sebelum panggilan untuk membaca. Program ini sekarang bebas melakukan apa saja
+ingin dilakukan selanjutnya.
+Pada langkah 9 di atas, kami mengatakan '' dapat dikembalikan ke prosedur perpustakaan ruang pengguna''
+untuk alasan yang baik. Panggilan sistem dapat memblokir penelepon, mencegahnya melanjutkan. Misalnya, jika mencoba membaca dari keyboard dan tidak ada yang
+diketik, penelepon harus diblokir. Dalam hal ini, sistem operasi akan terlihat
+sekitar untuk melihat apakah beberapa proses lain dapat dijalankan selanjutnya. Nanti, ketika input yang diinginkan
+tersedia, proses ini akan mendapatkan perhatian dari sistem dan menjalankan langkah 9-11.
+Di bagian berikut, kami akan memeriksa beberapa yang paling banyak digunakan
+Panggilan sistem POSIX, atau lebih khusus lagi, prosedur perpustakaan yang membuat itu
+panggilan sistem. POSIX memiliki sekitar 100 panggilan prosedur. Beberapa yang paling penting
+yang tercantum pada Gambar. 1-18, dikelompokkan untuk kenyamanan dalam empat kategori. Dalam teks
+kita akan secara singkat memeriksa setiap panggilan untuk melihat apa yang dilakukannya.
+Untuk sebagian besar, layanan yang ditawarkan oleh panggilan ini menentukan sebagian besar dari apa yang
+sistem operasi harus dilakukan, karena manajemen sumber daya pada komputer pribadi minimal (setidaknya dibandingkan dengan mesin besar dengan banyak pengguna). Itu
+layanan mencakup hal-hal seperti membuat dan mengakhiri proses, membuat, menghapus,
+membaca, dan menulis file, mengelola direktori, dan melakukan input dan output.
+Selain itu, perlu ditunjukkan bahwa pemetaan prosedur POSIX
+panggilan ke panggilan sistem tidak satu-ke-satu. Standar POSIX menentukan nomor
+prosedur yang harus disediakan oleh sistem konforman, tetapi tidak menentukan apakah itu panggilan sistem, panggilan perpustakaan, atau sesuatu yang lain. Jika suatu prosedur dapat dijalankan tanpa memanggil panggilan sistem (yaitu, tanpa menjebak ke kernel), itu akan
+biasanya dilakukan di ruang pengguna karena alasan kinerja. Namun, sebagian besar
+Prosedur POSIX melakukan panggilan sistem, biasanya dengan satu pemetaan prosedur langsung ke satu panggilan sistem. Dalam beberapa kasus, terutama di mana beberapa prosedur yang diperlukan hanyalah variasi kecil satu sama lain, satu panggilan sistem menangani lebih banyak
+dari satu panggilan perpustakaan.
+### 1.6.1 Panggilan Sistem untuk Manajemen Proses
+Kelompok panggilan pertama pada Gambar 1-18 berhubungan dengan manajemen proses. Garpu adalah
+tempat yang baik untuk memulai diskusi. Fork adalah satu-satunya cara untuk membuat proses baru di
+POSIX. Itu membuat duplikat yang tepat dari proses asli, termasuk semua file
+deskriptor, register—semuanya. Setelah garpu, proses asli dan salinan
+(orang tua dan anak) berpisah. Semua variabel memiliki nilai identik pada saat fork, tetapi karena data induk disalin untuk membuat turunan,
+perubahan berikutnya di salah satu dari mereka tidak mempengaruhi yang lain. (Teks program,
+yang tidak dapat diubah, dibagi antara orang tua dan anak.) Panggilan fork mengembalikan a
+nilai, yaitu nol pada anak dan sama dengan PID anak (Pengidentifikasi Proses)
+di induk. Menggunakan PID yang dikembalikan, kedua proses dapat melihat yang mana yang
+proses induk dan mana yang merupakan proses anak.
+
+![](Gambar/17.png)
+
+Dalam kebanyakan kasus, setelah percabangan, anak perlu mengeksekusi kode yang berbeda dari
+orang tua. Pertimbangkan kasus shell. Itu membaca perintah dari terminal,
+memotong proses anak, menunggu anak menjalankan perintah, dan kemudian
+membaca perintah berikutnya ketika anak berakhir. Untuk menunggu anak selesai,orang tua mengeksekusi panggilan sistem waitpid, yang hanya menunggu sampai anak berakhir
+(setiap anak jika ada lebih dari satu). Waitpid dapat menunggu anak tertentu, atau untuk apa pun
+anak tua dengan mengatur parameter pertama ke 1. Ketika waitpid selesai, alamatnya
+ditunjukkan oleh parameter kedua, statloc, akan disetel ke proses anak keluar
+status (terminasi normal atau abnormal dan nilai keluar). Berbagai pilihan juga
+disediakan, ditentukan oleh parameter ketiga. Misalnya, segera kembali jika
+belum ada anak yang keluar.
+Sekarang perhatikan bagaimana garpu digunakan oleh cangkang. Ketika sebuah perintah diketik,
+shell memotong proses baru. Proses anak ini harus menjalankan perintah pengguna.
+Ia melakukan ini dengan menggunakan panggilan sistem eksekutif, yang menyebabkan seluruh gambar inti menjadi
+digantikan oleh file yang disebutkan dalam parameter pertamanya. (Sebenarnya, sistem memanggil dirinya sendiri
+adalah exec, tetapi beberapa prosedur perpustakaan menyebutnya dengan parameter yang berbeda dan sedikit
+nama yang berbeda. Kami akan memperlakukan ini sebagai panggilan sistem di sini.) Shell yang sangat disederhanakan
+Ilustrasi penggunaan fork, waitpid, dan execve ditunjukkan pada Gambar 1-19.
+
+![](Gambar/18.png)
+
+Dalam kasus yang paling umum, execve memiliki tiga parameter: nama file untuk
+dieksekusi, pointer ke array argumen, dan pointer ke lingkungan
+Himpunan. Ini akan dijelaskan segera. Berbagai rutinitas perpustakaan, termasuk execl,
+execv, execle, dan execve, disediakan untuk memungkinkan parameter dihilangkan atau
+ditentukan dengan berbagai cara. Sepanjang buku ini kami akan menggunakan nama exec untuk
+mewakili panggilan sistem yang dipanggil oleh semua ini.
+Mari kita pertimbangkan kasus perintah seperti
+cp file1 file2
+digunakan untuk menyalin file1 ke file2. Setelah shell bercabang, proses anak menemukan dan
+mengeksekusi file cp dan memberikannya nama file sumber dan target.Program utama cp (dan program utama dari sebagian besar program C lainnya) berisi deklarasi
+utama (argc, argv, envp)
+di mana argc adalah hitungan jumlah item pada baris perintah, termasuk
+nama program. Untuk contoh di atas, argc adalah 3.
+Parameter kedua, argv, adalah penunjuk ke array. Elemen i dari array itu adalah a
+pointer ke string ke-i pada baris perintah. Dalam contoh kita, argv[0] akan menunjuk
+ke string ''cp'', argv[1] akan menunjuk ke string ''file1'', dan argv[2] akan
+arahkan ke string ''file2''.
+Parameter ketiga dari main, envp, adalah penunjuk ke lingkungan, array dari
+string yang berisi tugas dari nama formulir = nilai yang digunakan untuk menyampaikan informasi
+seperti jenis terminal dan nama direktori home ke program. Ada perpustakaan
+prosedur yang dapat dipanggil oleh program untuk mendapatkan variabel lingkungan, yang sering kali
+digunakan untuk menyesuaikan bagaimana pengguna ingin melakukan tugas-tugas tertentu (misalnya, printer default yang akan digunakan). Pada Gambar 1-19, tidak ada lingkungan yang diteruskan ke anak, jadi parameter ketiga dari eksekutif adalah nol.
+Jika exec tampak rumit, jangan putus asa; ini (secara semantik) yang paling kompleks dari semua panggilan sistem POSIX. Semua yang lain jauh lebih sederhana. Sebagai contoh sederhana, pertimbangkan exit, proses mana yang harus digunakan saat mereka
+selesai dieksekusi. Ini memiliki satu parameter, status keluar (0 hingga 255), yang dikembalikan ke induk melalui statloc dalam panggilan sistem waitpid.
+Proses di UNIX memiliki memori yang dibagi menjadi tiga segmen: teks
+segmen (yaitu, kode program), segmen data (yaitu, variabel), dan
+segmen tumpukan. Segmen data tumbuh ke atas dan tumpukan tumbuh ke bawah,
+seperti yang ditunjukkan pada Gambar. 1-20. Di antara mereka ada celah ruang alamat yang tidak digunakan. Tumpukan
+tumbuh ke celah secara otomatis, sesuai kebutuhan, tetapi perluasan segmen data adalah
+dilakukan secara eksplisit dengan menggunakan panggilan sistem, br k, yang menentukan alamat baru di mana
+segmen data akan berakhir. Panggilan ini, bagaimanapun, tidak didefinisikan oleh standar POSIX, karena programmer didorong untuk menggunakan prosedur perpustakaan malloc untuk
+mengalokasikan penyimpanan secara dinamis, dan implementasi yang mendasari malloc adalah
+tidak dianggap sebagai subjek yang cocok untuk standardisasi karena hanya sedikit programmer yang menggunakannya
+secara langsung dan diragukan bahwa ada orang yang menyadari bahwa br k tidak ada di POSIX.
+### 1.6.2 Panggilan Sistem untuk Manajemen File
+Banyak panggilan sistem berhubungan dengan sistem file. Di bagian ini kita akan melihat panggilan
+yang beroperasi pada file individual; berikutnya kita akan memeriksa mereka yang melibatkan
+direktori atau sistem file secara keseluruhan.
+Untuk membaca atau menulis file, file harus dibuka terlebih dahulu. Panggilan ini menentukan nama file
+untuk dibuka, baik sebagai nama path absolut atau relatif terhadap direktori kerja,
+serta kode O RDONLY, O WRONLY, atau O RDWR, artinya terbuka untuk
+membaca, menulis, atau keduanya. Untuk membuat file baru, parameter O CREAT digunakan.
+
+![](Gambar/19.png)
+
+Deskriptor file yang dikembalikan kemudian dapat digunakan untuk membaca atau menulis. Setelah itu,
+file dapat ditutup dengan menutup, yang membuat deskriptor file tersedia untuk digunakan kembali pada a
+selanjutnya terbuka.
+Panggilan yang paling banyak digunakan tidak diragukan lagi adalah panggilan baca dan tulis. Kami melihat membaca lebih awal. Wr ite memiliki parameter yang sama.
+Meskipun sebagian besar program membaca dan menulis file secara berurutan, untuk beberapa aplikasi, program harus dapat mengakses bagian mana pun dari file secara acak. Terkait
+dengan setiap file adalah pointer yang menunjukkan posisi saat ini dalam file. Saat membaca (menulis) secara berurutan, biasanya menunjuk ke byte berikutnya untuk dibaca (ditulis).
+Panggilan lseek mengubah nilai penunjuk posisi, sehingga panggilan berikutnya ke
+membaca atau menulis dapat dimulai di mana saja dalam file.
+Lseek memiliki tiga parameter: yang pertama adalah deskriptor file untuk file tersebut, yang kedua adalah posisi file, dan yang ketiga memberi tahu apakah posisi file relatif terhadap
+awal file, posisi saat ini, atau akhir file. Nilai yang dikembalikan
+oleh lseek adalah posisi absolut dalam file (dalam byte) setelah mengubah pointer.
+Untuk setiap file, UNIX melacak mode file (file biasa, file khusus, direktori, dan sebagainya), ukuran, waktu modifikasi terakhir, dan informasi lainnya. Pro gram dapat meminta untuk melihat informasi ini melalui panggilan sistem stat. Parameter pertama
+menentukan file yang akan diperiksa; yang kedua adalah penunjuk ke struktur di mana
+informasi yang akan diletakkan. Panggilan fstat melakukan hal yang sama untuk file yang terbuka.
+### 1.6.3 Panggilan Sistem untuk Manajemen Direktori
+Di bagian ini kita akan melihat beberapa panggilan sistem yang lebih berhubungan dengan direktori
+atau sistem file secara keseluruhan, bukan hanya untuk satu file tertentu seperti sebelumnya
+bagian. Dua panggilan pertama, mkdir dan rmdir, membuat dan menghapus direktori kosong,
+masing-masing. Panggilan berikutnya adalah tautan. Tujuannya adalah untuk memungkinkan file yang sama muncul
+di bawah dua atau lebih nama, seringkali di direktori yang berbeda. Penggunaan tipikal adalah untuk mengizinkan
+beberapa anggota tim pemrograman yang sama untuk berbagi file yang sama, dengan masing-masing
+dari mereka memiliki file yang muncul di direktorinya sendiri, mungkin dengan nama yang berbeda.
+Berbagi file tidak sama dengan memberikan salinan pribadi kepada setiap anggota tim; memiliki file bersama berarti bahwa perubahan yang dibuat oleh setiap anggota tim secara instan
+terlihat oleh anggota lain—hanya ada satu file. Ketika salinan dibuat dari a
+file, perubahan selanjutnya yang dilakukan pada satu salinan tidak memengaruhi salinan lainnya.
+Untuk melihat bagaimana link bekerja, perhatikan situasi pada Gambar 1-21(a). Berikut adalah dua
+pengguna, ast dan jim, masing-masing memiliki direktori sendiri dengan beberapa file. Jika ast sekarang menjalankan program yang berisi panggilan sistem
+link("/usr/jim/memo", "/usr/ast/catatan");
+file memo di direktori jim sekarang dimasukkan ke direktori ast dengan nama
+catatan. Setelah itu, /usr/jim/memo dan /usr/ast/note merujuk ke file yang sama. sebagai
+selain itu, apakah direktori pengguna disimpan di /usr, /user, /home, atau di tempat lain
+hanya keputusan yang dibuat oleh administrator sistem lokal.
+
+![](Gambar/20.png)
+
+Memahami cara kerja tautan mungkin akan memperjelas fungsinya.
+Setiap file di UNIX memiliki nomor unik, nomor-i, yang mengidentifikasinya. Ini
+i-number adalah indeks ke dalam tabel i-node, satu per file, memberi tahu siapa pemilik file,
+di mana blok disknya, dan seterusnya. Direktori hanyalah sebuah file yang berisi sekumpulan
+(nomor-i, nama ASCII) berpasangan. Dalam versi pertama UNIX, setiap entri direktori
+adalah 16 byte—2 byte untuk nomor-i dan 14 byte untuk nama. Sekarang lebih banyak
+struktur yang rumit diperlukan untuk mendukung nama file yang panjang, tetapi secara konseptual direktori masih merupakan sekumpulan pasangan (nomor-i, nama ASCII). Pada Gambar 1-21, surat memiliki i-num ber 16, dan seterusnya. Apa yang dilakukan tautan hanyalah membuat entri direktori baru dengan
+nama (mungkin baru), menggunakan nomor-i dari file yang ada. Pada Gambar. 1-21(b), dua
+entri memiliki nomor-i yang sama (70) dan dengan demikian merujuk ke file yang sama. Jika salah satunya adalah
+kemudian dihapus, menggunakan panggilan sistem batalkan tautan, yang lainnya tetap ada. Jika keduanya dipindahkan, UNIX melihat bahwa tidak ada entri ke file yang ada (bidang di i-node melacak
+dari jumlah entri direktori yang menunjuk ke file), sehingga file tersebut dihapus dari
+disk.
+Seperti yang telah kami sebutkan sebelumnya, panggilan sistem mount memungkinkan dua sistem file untuk
+digabung menjadi satu. Situasi umum adalah memiliki sistem file root, yang berisi
+versi biner (yang dapat dieksekusi) dari perintah umum dan lainnya yang banyak digunakan
+file, pada hard disk (sub)partisi dan file pengguna pada (sub)partisi lain. Lebih jauh,
+pengguna kemudian dapat memasukkan disk USB dengan file untuk dibaca.By executing the mount system call, the USB file system can be attached to the
+root file system, as shown in Fig. 1-22. A typical statement in C to mount is
+mount("/dev/sdb0", "/mnt", 0);
+where the first parameter is the name of a block special file for USB drive 0, the
+second parameter is the place in the tree where it is to be mounted, and the third
+parameter tells whether the file system is to be mounted read-write or read-only.
+
+![](Gambar/21.png)
+
+Setelah panggilan mount, file di drive 0 dapat diakses hanya dengan menggunakan jalurnya
+dari direktori root atau direktori kerja, tanpa memperhatikan drive mana itu
+pada. Bahkan, drive kedua, ketiga, dan keempat juga dapat dipasang di mana saja di
+pohon. Panggilan pemasangan memungkinkan untuk mengintegrasikan media yang dapat dilepas ke dalam satu
+hierarki file terintegrasi, tanpa harus khawatir tentang perangkat tempat file berada.
+Meskipun contoh ini melibatkan CD-ROM, bagian dari hard disk (sering disebut
+partisi atau perangkat kecil) juga dapat dipasang dengan cara ini, serta eksternal
+hard disk dan stik USB. Ketika sistem file tidak lagi diperlukan, itu bisa menjadi
+dilepas dengan panggilan sistem umount.
+### 1.6.4 Panggilan Sistem Lain-Lain
+Berbagai panggilan sistem lain juga ada. Kami akan melihat hanya empat dari mereka
+di sini. Panggilan chdir mengubah direktori kerja saat ini. Setelah panggilan
+chdir("/usr/ast/tes");
+pembukaan pada file xyz akan membuka /usr/ast/test/xyz. Konsep direktori kerja menghilangkan kebutuhan untuk mengetik nama path absolut (panjang) sepanjang waktu.
+Di UNIX setiap file memiliki mode yang digunakan untuk perlindungan. Modus termasuk
+baca-tulis-eksekusi bit untuk pemilik, grup, dan lainnya. Panggilan sistem chmod
+memungkinkan untuk mengubah mode file. Misalnya, untuk membuat file hanya dapat dibaca oleh semua orang kecuali pemiliknya, seseorang dapat mengeksekusi
+chmod("berkas", 0644);
+Kill system call adalah cara pengguna dan proses pengguna mengirim sinyal. Jika suatu proses disiapkan untuk menangkap sinyal tertentu, maka ketika tiba, penangan sinyal adalah Lari. Jika proses tidak dipersiapkan untuk menangani sinyal, maka kedatangannya akan mematikan proses (karenanya nama panggilannya).
+POSIX mendefinisikan sejumlah prosedur untuk menangani waktu. Sebagai contoh,
+waktu baru saja mengembalikan waktu saat ini dalam hitungan detik, dengan 0 sesuai dengan 1 Januari 1970
+tengah malam (saat hari baru dimulai, bukan berakhir). Pada komputer yang menggunakan 32-bit
+kata, nilai maksimum waktu dapat kembali adalah 232 1 detik (dengan asumsi bilangan bulat unsigned digunakan). Nilai ini sesuai dengan sedikit lebih dari 136 tahun. Jadi dalam
+tahun 2106, sistem UNIX 32-bit akan mengamuk, tidak seperti masalah Y2K terkenal yang akan mendatangkan malapetaka dengan komputer dunia pada tahun 2000, apakah itu
+bukan karena upaya besar-besaran yang dilakukan industri TI untuk memperbaiki masalah. Jika Anda saat ini memiliki sistem UNIX 32-bit, Anda disarankan untuk menukarnya dengan sistem 64-bit
+beberapa waktu sebelum tahun 2106.
+### 1.6.5 Windows Win32 API
+Sejauh ini kami telah berfokus terutama pada UNIX. Sekarang saatnya untuk melihat secara singkat
+jendela. Windows dan UNIX berbeda secara mendasar dalam model pemrograman masing-masing. Program UNIX terdiri dari kode yang melakukan sesuatu atau
+lainnya, membuat panggilan sistem untuk menjalankan layanan tertentu. Sebaliknya, program Windows biasanya digerakkan oleh peristiwa. Program utama menunggu beberapa acara untuk
+terjadi, kemudian memanggil prosedur untuk menanganinya. Peristiwa khas adalah kunci dipukul,
+mouse dipindahkan, tombol mouse ditekan, atau drive USB dimasukkan.
+Penangan kemudian dipanggil untuk memproses acara, memperbarui layar dan memperbarui status program internal. Secara keseluruhan, ini mengarah pada gaya pemrograman yang agak berbeda dibandingkan dengan UNIX, tetapi karena fokus buku ini adalah pada sistem operasi.
+fungsi dan struktur, model pemrograman yang berbeda ini tidak akan menjadi perhatian kita
+lebih banyak.
+Tentu saja, Windows juga memiliki panggilan sistem. Dengan UNIX, hampir ada hubungan satu-ke-satu antara panggilan sistem (misalnya, membaca) dan prosedur perpustakaan
+(misalnya, baca) digunakan untuk memanggil panggilan sistem. Dengan kata lain, untuk setiap panggilan sistem,
+kira-kira ada satu prosedur perpustakaan yang dipanggil untuk memanggilnya, seperti yang ditunjukkan dalam
+Gambar 1-17. Selanjutnya, POSIX hanya memiliki sekitar 100 panggilan prosedur.
+Dengan Windows, situasinya sangat berbeda. Untuk mulai dengan, perpustakaan
+panggilan dan panggilan sistem yang sebenarnya sangat dipisahkan. Microsoft telah mendefinisikan satu set
+prosedur yang disebut Win32 API (Application Programming Interface) yang
+programmer diharapkan menggunakan untuk mendapatkan layanan sistem operasi. Antarmuka ini adalah
+(sebagian) didukung di semua versi Windows sejak Windows 95. Dengan memisahkan antarmuka API dari panggilan sistem yang sebenarnya, Microsoft mempertahankan kemampuan untuk
+ubah panggilan sistem yang sebenarnya tepat waktu (bahkan dari rilis ke rilis) tanpa invali berkencan dengan program yang ada. Apa yang sebenarnya merupakan Win32 juga sedikit ambigu karena versi Windows terbaru memiliki banyak panggilan baru yang sebelumnya tidak tersedia. Di bagian ini, Win32 berarti antarmuka yang didukung oleh semua versi Windows. Win32 menyediakan kompatibilitas antar versi Windows.Jumlah panggilan API Win32 sangat besar, berjumlah ribuan. Lebih jauh lagi, sementara banyak dari mereka melakukan panggilan sistem, sejumlah besar dilakukan seluruhnya di ruang pengguna. Akibatnya, dengan Windows itu
+tidak mungkin untuk melihat apa itu panggilan sistem (yaitu, dilakukan oleh kernel) dan apa itu
+hanya panggilan perpustakaan ruang pengguna. Sebenarnya, apa itu panggilan sistem dalam satu versi
+Windows dapat dilakukan di ruang pengguna dalam versi yang berbeda, dan sebaliknya. Kapan
+kami membahas panggilan sistem Windows dalam buku ini, kami akan menggunakan prosedur Win32 (jika sesuai) karena Microsoft menjamin bahwa ini akan stabil selama
+waktu. Tetapi perlu diingat bahwa tidak semuanya adalah panggilan sistem yang sebenarnya (mis.,
+perangkap ke kernel).
+Win32 API memiliki sejumlah besar panggilan untuk mengelola jendela, geometris
+gambar, teks, font, scrollbar, kotak dialog, menu, dan fitur lain dari GUI.
+Sejauh subsistem grafis berjalan di kernel (berlaku pada beberapa versi
+Windows tetapi tidak pada semua), ini adalah panggilan sistem; jika tidak, mereka hanya perpustakaan
+panggilan. Haruskah kita membahas panggilan ini dalam buku ini atau tidak? Karena mereka tidak benar-benar
+terkait dengan fungsi sistem operasi, kami telah memutuskan untuk tidak melakukannya, meskipun
+mereka dapat dilakukan oleh kernel. Pembaca yang tertarik dengan Win32 API harus
+berkonsultasilah dengan salah satu dari banyak buku tentang masalah ini (misalnya, Hart, 1997; Rektor dan Pendatang baru, 1997; dan Simon, 1997).
+Bahkan memperkenalkan semua panggilan API Win32 di sini tidak mungkin, jadi kami akan
+membatasi diri kita pada panggilan-panggilan yang kira-kira sesuai dengan fungsi dari
+Panggilan UNIX tercantum pada Gambar 1-18. Ini tercantum pada Gambar. 1-23.
+Mari kita lihat secara singkat daftar Gambar 1-23. CreateProcess membuat
+proses baru. Itu melakukan pekerjaan gabungan dari fork dan execve di UNIX. Ini memiliki banyak
+parameter yang menentukan properti dari proses yang baru dibuat. Windows tidak
+tidak memiliki hierarki proses seperti yang dilakukan UNIX sehingga tidak ada konsep proses induk dan proses anak. Setelah proses dibuat, pencipta dan pencipta adalah
+sama. WaitForSingleObject digunakan untuk menunggu suatu event. Banyak acara yang mungkin bisa
+ditunggu. Jika parameter menentukan suatu proses, maka pemanggil menunggu
+proses tertentu untuk keluar, yang dilakukan menggunakan ExitProcess.
+Enam panggilan berikutnya beroperasi pada file dan secara fungsional mirip dengan UNIX mereka
+rekan-rekan meskipun mereka berbeda dalam parameter dan rincian. Tetap saja, file bisa menjadi
+dibuka, ditutup, dibaca, dan ditulis hampir sama seperti di UNIX. SetFilePointer dan
+Panggilan GetFileAttr ibutesEx mengatur posisi file dan mendapatkan beberapa atribut file.
+Windows memiliki direktori dan dibuat dengan CreateDirector y dan
+RemoveDirector y panggilan API, masing-masing. Ada juga gagasan tentang direktori saat ini, yang ditetapkan oleh SetCurrentDirector y. Waktu saat ini diperoleh menggunakan GetLo calTime.
+Antarmuka Win32 tidak memiliki tautan ke file, sistem file terpasang, keamanan, atau sinyal, sehingga panggilan yang terkait dengan UNIX tidak ada. Tentu saja,
+Win32 memiliki sejumlah besar panggilan lain yang tidak dimiliki UNIX, terutama untuk
+mengelola GUI. Windows Vista memiliki sistem keamanan yang rumit dan juga mendukung tautan file port. Windows 7 dan 8 menambahkan lebih banyak fitur dan panggilan sistem.
+
+![](Gambar/22.png)
+
+Satu catatan terakhir tentang Win32 mungkin layak untuk dibuat. Win32 tidak terlalu buruk
+antarmuka yang seragam atau konsisten. Penyebab utama di sini adalah kebutuhan untuk kompatibel kembali dengan antarmuka 16-bit sebelumnya yang digunakan di Windows 3.x.
+## 1.7 STRUKTUR SISTEM OPERASI
+Sekarang kita telah melihat seperti apa sistem operasi di luar (yaitu,
+antarmuka programmer), sekarang saatnya untuk melihat ke dalam. Pada bagian berikut, kita akan memeriksa enam struktur berbeda yang telah dicoba, untuk mendapatkan:
+beberapa gagasan tentang spektrum kemungkinan. Ini sama sekali tidak lengkap, tapi
+mereka memberikan gambaran tentang beberapa desain yang telah dicoba dalam praktek. Enam desain
+yang akan kita bahas disini adalah sistem monolitik, sistem berlapis, mikrokernel, sistem cli ent-server, mesin virtual, dan eksokernel.
+
+### 1.7.1 Sistem Monolitik
+Sejauh ini organisasi yang paling umum, dalam pendekatan monolitik keseluruhan
+sistem operasi berjalan sebagai satu program dalam mode kernel. Sistem operasinya adalah
+ditulis sebagai kumpulan prosedur, dihubungkan bersama menjadi satu executable besar
+program biner. Ketika teknik ini digunakan, setiap prosedur dalam sistem bebas
+untuk memanggil yang lain, jika yang terakhir memberikan beberapa perhitungan yang berguna bahwa yang pertama
+kebutuhan. Mampu memanggil prosedur apa pun yang Anda inginkan sangat efisien, tetapi memiliki ribuan prosedur yang dapat memanggil satu sama lain tanpa batasan juga dapat menyebabkan
+sistem yang rumit dan sulit dipahami. Juga, crash di salah satu dari ini
+prosedur akan mencatat seluruh sistem operasi.
+Untuk membangun program objek aktual dari sistem operasi ketika pendekatan ini digunakan, pertama-tama yang pertama mengkompilasi semua prosedur individu (atau file yang berisi prosedur) dan kemudian mengikat semuanya menjadi satu executable tunggal.
+file menggunakan tautan sistem. Dalam hal menyembunyikan informasi, pada dasarnya ada
+none—setiap prosedur terlihat oleh setiap prosedur lainnya (berlawanan dengan struktur yang berisi modul atau paket, di mana sebagian besar informasi disembunyikan
+aw ay di dalam modul, dan hanya titik masuk yang ditunjuk secara resmi yang dapat dipanggil
+dari luar modul).
+Bahkan dalam sistem monolitik, bagaimanapun, adalah mungkin untuk memiliki beberapa struktur. Itu
+layanan (panggilan sistem) yang disediakan oleh sistem operasi diminta dengan menempatkan
+parameter di tempat yang ditentukan dengan baik (misalnya, di tumpukan) dan kemudian mengeksekusi jebakan
+petunjuk. Instruksi ini mengalihkan mesin dari mode pengguna ke mode kernel
+dan mentransfer kontrol ke sistem operasi, ditunjukkan sebagai langkah 6 pada Gambar. 1-17. Itu
+sistem operasi kemudian mengambil parameter dan menentukan panggilan sistem mana yang
+untuk dilaksanakan. Setelah itu, indeks ke dalam tabel yang berisi di slot k pointer
+ke prosedur yang melakukan panggilan sistem k (langkah 7 pada Gambar 1-17).
+Organisasi ini menyarankan struktur dasar untuk sistem operasi:
+1. Program utama yang memanggil prosedur layanan yang diminta.
+2. Seperangkat prosedur layanan yang melakukan panggilan sistem.
+3. Seperangkat prosedur utilitas yang membantu prosedur pelayanan.
+Dalam model ini, untuk setiap panggilan sistem ada satu prosedur layanan yang menangani
+itu dan mengeksekusinya. Prosedur utilitas melakukan hal-hal yang diperlukan oleh beberapa prosedur layanan, seperti mengambil data dari program pengguna. Divisi ini
+prosedur menjadi tiga lapisan ditunjukkan pada Gambar. 1-24.
+Selain sistem operasi inti yang dimuat saat komputer
+boot, banyak sistem operasi mendukung ekstensi yang dapat dimuat, seperti perangkat I/O
+driver dan sistem file. Komponen ini dimuat sesuai permintaan. Di UNIX mereka
+disebut perpustakaan bersama. Di Windows mereka disebut DLL (Dynamic-Link
+Perpustakaan). Mereka memiliki ekstensi file .dll dan direktori C:\Windows\system32
+pada sistem Windows memiliki lebih dari 1000 dari mereka.
+
+![](Gambar/23.png)
+
+### 1.7.2 Sistem Berlapis
+Sebuah generalisasi dari pendekatan Gambar 1-24 adalah untuk mengatur sistem operasi sebagai hierarki lapisan, masing-masing dibangun di atas yang di bawahnya. Pertama
+Sistem yang dibangun dengan cara ini adalah sistem THE yang dibangun di sekolah Technische Hoge Eindhoven di Belanda oleh E. W. Dijkstra (1968) dan murid-muridnya.
+Sistem THE adalah sistem batch sederhana untuk komputer Belanda, Electrolog ica X8, yang memiliki 32K kata 27-bit (bit mahal saat itu).
+Sistem ini memiliki enam lapisan, seperti yang ditunjukkan pada Gambar 1-25. Lapisan 0 berurusan dengan alokasi
+prosesor, beralih di antara proses ketika interupsi terjadi atau pengatur waktu
+kedaluwarsa. Di atas lapisan 0, sistem terdiri dari proses berurutan, masing-masing
+yang dapat diprogram tanpa harus khawatir tentang fakta bahwa banyak
+proses berjalan pada satu prosesor. Dengan kata lain, layer 0 menyediakan
+multiprogramming dasar dari CPU.
+
+![](Gambar/24.png)
+
+Layer 1 melakukan manajemen memori. Ini mengalokasikan ruang untuk proses di main
+memori dan pada drum kata 512K yang digunakan untuk menyimpan bagian proses (halaman) untuk
+yang tidak ada ruang di memori utama. Di atas lapisan 1, proses tidak memiliki
+khawatir tentang apakah mereka ada di memori atau di drum; perangkat lunak lapisan 1 berhati-hati memastikan halaman dibawa ke memori pada saat mereka
+dibutuhkan dan disingkirkan saat tidak dibutuhkan.
+Layer 2 menangani komunikasi antara setiap proses dan konsol operator (yaitu, pengguna). Di atas lapisan ini, setiap proses secara efektif memiliki konsol operatornya sendiri. Layer 3 menangani pengelolaan perangkat I/O dan buffering
+arus informasi ke dan dari mereka. Di atas lapisan 3 setiap proses dapat menangani
+perangkat I/O abstrak dengan properti bagus, bukan perangkat nyata dengan banyak pembohong pecu. Layer 4 adalah tempat program pengguna ditemukan. Mereka tidak harus
+khawatir tentang proses, memori, konsol, atau manajemen I/O. operator sistem
+proses terletak di lapisan 5.
+Generalisasi lebih lanjut dari konsep layering hadir di MULTICS
+sistem. Alih-alih lapisan, MULTICS digambarkan memiliki serangkaian konsentris
+cincin, dengan bagian dalam lebih diistimewakan daripada bagian luar (yang secara efektif adalah hal yang sama). Ketika sebuah prosedur di cincin luar ingin memanggil prosedur di cincin dalam, itu harus membuat setara dengan panggilan sistem, yaitu, a
+instruksi TRAP yang parameternya diperiksa dengan cermat validitasnya sebelum
+panggilan diizinkan untuk dilanjutkan. Meskipun seluruh sistem operasi adalah bagian dari
+ruang alamat setiap proses pengguna di MULTICS, perangkat keras memungkinkan untuk
+menunjuk prosedur individu (segmen memori, sebenarnya) sebagai yang dilindungi terhadap
+membaca, menulis, atau mengeksekusi.
+Padahal skema THE layering sebenarnya hanya sebagai bantuan desain, karena semua
+bagian dari sistem pada akhirnya dihubungkan bersama menjadi satu program yang dapat dieksekusi, di MULTICS, mekanisme cincin sangat banyak hadir pada waktu berjalan dan
+ditegakkan oleh perangkat keras. Keuntungan dari mekanisme cincin adalah dapat dengan mudah diperluas ke struktur subsistem pengguna. Misalnya, seorang profesor dapat menulis
+program untuk menguji dan menilai program siswa dan menjalankan program ini di ring n, dengan
+program siswa berjalan di ring n + 1 sehingga mereka tidak dapat mengubahnya
+nilai.
+### 1.7.3 Mikrokernel
+Dengan pendekatan berlapis, desainer memiliki pilihan di mana menggambar batas kernel-pengguna. Secara tradisional, semua lapisan masuk ke dalam kernel, tapi itu tidak
+diperlukan. Faktanya, kasus yang kuat dapat dibuat untuk menempatkan sesedikit mungkin dalam mode kernel karena bug di kernel dapat menurunkan sistem secara instan. Sebaliknya, proses pengguna dapat diatur untuk memiliki daya yang lebih kecil sehingga bug mungkin tidak ada
+fatal.
+Berbagai peneliti telah berulang kali mempelajari jumlah bug per 1000 baris
+kode (misalnya, Basilli dan Perricone, 1984; dan Ostrand dan Weyuker, 2002). Serangga
+kepadatan tergantung pada ukuran modul, usia modul, dan banyak lagi, tetapi angka rata-rata untuk
+sistem industri yang serius adalah antara dua dan sepuluh bug per seribu baris kode.
+Ini berarti bahwa sistem operasi monolitik dengan lima juta baris kode kemungkinan mengandung antara 10.000 dan 50.000 bug kernel. Tidak semua ini berakibat fatal, tentu saja tentu saja, karena beberapa bug mungkin seperti mengeluarkan pesan kesalahan yang salah di a
+situasi yang jarang terjadi. Namun demikian, sistem operasi cukup buggy
+bahwa pabrikan komputer memasang tombol reset (seringkali di panel depan),
+sesuatu yang tidak dilakukan oleh produsen perangkat TV, stereo, dan mobil, meskipun
+sejumlah besar perangkat lunak di perangkat ini.
+Ide dasar di balik desain mikrokernel adalah untuk mencapai keandalan yang tinggi dengan
+membagi sistem operasi menjadi modul kecil yang terdefinisi dengan baik, hanya satu dari
+yang—mikrokernel—berjalan dalam mode kernel dan sisanya berjalan sebagai proses pengguna biasa yang relatif lebih bertenaga. Secara khusus, dengan menjalankan setiap driver perangkat dan file
+sistem sebagai proses pengguna yang terpisah, bug di salah satunya dapat merusak komponen itu,
+tetapi tidak dapat membuat crash seluruh sistem. Dengan demikian bug pada driver audio akan menyebabkan
+suara menjadi kacau atau berhenti, tetapi tidak akan membuat komputer crash. Sebaliknya, dalam
+sistem monolitik dengan semua driver di kernel, driver audio kereta dapat dengan mudah
+mereferensikan alamat memori yang tidak valid dan menghentikan sistem secara instan.
+Banyak mikrokernel telah diimplementasikan dan digunakan selama beberapa dekade (Haertig
+dkk., 1997; Heiser dkk., 2006; Herder dkk., 2006; Hildebrand, 1992; Kirsch et
+al., 2005; Liedtke, 1993, 1995, 1996; Pike dkk., 1992; dan Zuberi et al., 1999).
+Dengan pengecualian OS X, yang didasarkan pada mikrokernel Mach (Accetta et
+al., 1986), sistem operasi desktop umum tidak menggunakan mikrokernel. Namun,
+mereka dominan dalam aplikasi real-time, industri, avionik, dan militer yang
+misi kritis dan memiliki persyaratan keandalan yang sangat tinggi. Beberapa mikrokernel paling terkenal termasuk Integrity, K42, L4, PikeOS, QNX, Symbian, dan
+MINIX 3. Kami sekarang memberikan gambaran singkat tentang MINIX 3, yang mengambil ide dari
+modularitas hingga batasnya, memecah sebagian besar sistem operasi menjadi beberapa
+proses mode pengguna yang independen. MINIX 3 adalah sumber terbuka yang sesuai dengan POSIX
+sistem tersedia secara bebas di www.minix3.org (Giuffrida et al., 2012; Giuffrida et al.,
+2013; Herder dkk., 2006; Herder dkk., 2009; dan Hruby et al., 2013).
+Mikrokernel MINIX 3 hanya sekitar 12.000 baris C dan sekitar 1400 baris
+assembler untuk fungsi tingkat yang sangat rendah seperti menangkap interupsi dan switching
+proses. Kode C mengelola dan menjadwalkan proses, menangani antarproses
+komunikasi (dengan melewatkan pesan antar proses), dan menawarkan serangkaian
+40 panggilan kernel untuk memungkinkan sistem operasi lainnya melakukan tugasnya. Panggilan ini
+melakukan fungsi seperti mengaitkan penangan ke interupsi, memindahkan data di antara ruang iklan, dan memasang peta memori untuk proses baru. Struktur proses
+dari MINIX 3 ditunjukkan pada Gambar. 1-26, dengan penangan panggilan kernel berlabel Sys. Itu
+driver perangkat untuk jam juga ada di kernel karena penjadwal berinteraksi
+erat dengan itu. Driver perangkat lain berjalan sebagai proses pengguna yang terpisah.
+Di luar kernel, sistem terstruktur sebagai tiga lapisan proses yang semuanya berjalan dalam mode pengguna. Lapisan terendah berisi driver perangkat. Sejak mereka berlari masuk
+mode pengguna, mereka tidak memiliki akses fisik ke ruang port I/O dan tidak dapat mengeluarkan
+Perintah I/O secara langsung. Sebagai gantinya, untuk memprogram perangkat I/O, driver membangun struktur yang memberi tahu nilai mana yang akan ditulis ke port I/O mana dan membuat pemanggilan kernel.
+
+![](Gambar/25.png)
+
+kernel untuk melakukan penulisan. Pendekatan ini berarti bahwa kernel dapat memeriksa untuk melihat
+bahwa driver sedang menulis (atau membaca) dari I/O yang diizinkan untuk digunakan. Akibatnya
+(dan tidak seperti desain monolitik), driver audio buggy tidak dapat menulis secara tidak sengaja
+disk.
+Di atas driver adalah lapisan mode pengguna lain yang berisi server, yang melakukan
+sebagian besar pekerjaan sistem operasi. Satu atau lebih file server mengelola file
+sistem, manajer proses membuat, menghancurkan, dan mengelola proses, dan sebagainya
+pada. Program pengguna memperoleh layanan sistem operasi dengan mengirimkan pesan singkat ke
+server meminta panggilan sistem POSIX. Misalnya, suatu proses perlu
+do a read mengirim pesan ke salah satu file server yang memberitahukan apa yang harus dibaca.
+Salah satu server yang menarik adalah server reinkarnasi, yang tugasnya adalah memeriksa apakah
+server dan driver lain berfungsi dengan benar. Dalam hal yang salah adalah
+terdeteksi, secara otomatis diganti tanpa campur tangan pengguna. Lewat sini,
+sistem penyembuhan diri dan dapat mencapai keandalan yang tinggi.
+Sistem memiliki banyak batasan yang membatasi kekuatan setiap proses. Seperti disebutkan, driver hanya dapat menyentuh port I/O resmi, tetapi akses ke panggilan kernel juga
+dikendalikan pada basis per-proses, seperti kemampuan untuk mengirim pesan ke proses lain. Proses juga dapat memberikan izin terbatas untuk proses lain untuk memiliki
+kernel mengakses ruang alamat mereka. Sebagai contoh, sistem file dapat memberikan izin untuk driver disk untuk membiarkan kernel menempatkan blok disk yang baru dibaca pada lokasi tertentu.
+alamat dalam ruang alamat sistem file. Jumlah total dari semua batasan ini adalah bahwa setiap driver dan server memiliki kekuatan yang tepat untuk melakukan pekerjaannya dan tidak ada apa-apa
+lebih, sehingga sangat membatasi kerusakan yang dapat dilakukan komponen kereta.
+Gagasan yang agak terkait dengan memiliki kernel minimal adalah dengan meletakkan mekanisme
+untuk melakukan sesuatu di kernel tetapi bukan kebijakan. Untuk membuat poin ini lebih baik,
+mempertimbangkan penjadwalan proses. Sebuah algoritma penjadwalan yang relatif sederhana adalah
+untuk menetapkan prioritas numerik untuk setiap proses dan kemudian menjalankan kernel proses dengan prioritas tertinggi yang dapat dijalankan. Mekanismenya—di dalam kernel—adalah untuk
+cari proses dengan prioritas tertinggi dan jalankan. Kebijakan—menetapkan prioritas untuk
+proses—dapat dilakukan oleh proses mode pengguna. Dengan cara ini, kebijakan dan mekanisme dapat dipisahkan dan kernel dapat dibuat lebih kecil.
+### 1.7.4 Model Server-Klien
+Sedikit variasi dari ide mikrokernel adalah untuk membedakan dua kelas proses, server, yang masing-masing menyediakan beberapa layanan, dan klien, yang menggunakan
+layanan ini. Model ini dikenal sebagai model client-server. Seringkali yang terendah
+layer adalah mikrokernel, tetapi itu tidak diperlukan. Esensinya adalah adanya proses cli ent dan proses server.
+Komunikasi antara klien dan server sering melalui pesan lewat. Ke
+mendapatkan layanan, proses klien membangun pesan yang mengatakan apa yang diinginkannya dan
+mengirimkannya ke layanan yang sesuai. Layanan kemudian melakukan pekerjaan dan mengirim kembali
+jawabannya. Jika klien dan server kebetulan berjalan di mesin yang sama, pasti
+pengoptimalan dimungkinkan, tetapi secara konseptual, kita masih berbicara tentang pesan
+lewat di sini.
+Generalisasi yang jelas dari ide ini adalah membuat klien dan server berjalan pada
+komputer yang berbeda, dihubungkan oleh jaringan lokal atau area luas, seperti yang digambarkan dalam
+Gambar 127. Karena klien berkomunikasi dengan server dengan mengirimkan pesan, klien tidak perlu mengetahui apakah pesan ditangani secara lokal pada mesin mereka sendiri, atau apakah pesan tersebut dikirim melalui jaringan ke server pada mesin jarak jauh.
+Sejauh menyangkut klien, hal yang sama terjadi dalam kedua kasus: permintaan adalah
+dikirim dan balasan kembali. Jadi model client-server adalah abstraksi yang dapat
+digunakan untuk satu mesin atau untuk jaringan mesin.
+
+![](Gambar/26.png)
+
+Semakin banyak sistem yang melibatkan pengguna di PC rumah mereka sebagai klien dan besar
+mesin di tempat lain berjalan sebagai server. Faktanya, sebagian besar Web mengoperasikan ini
+cara. PC mengirimkan permintaan halaman Web ke server dan halaman Web datang
+kembali. Ini adalah penggunaan khas model client-server dalam jaringan. 
+
+### 1.7.5 Mesin Virtual
+Rilis awal OS/360 adalah sistem batch yang ketat. Namun demikian, banyak
+Pengguna 360 ingin dapat bekerja secara interaktif di terminal, sehingga berbagai kelompok,
+baik di dalam maupun di luar IBM, memutuskan untuk menulis sistem pembagian waktu untuk itu. Sistem pembagian waktu resmi IBM, TSS/360, dikirimkan terlambat, dan ketika akhirnya tiba, sistem itu sangat besar dan lambat sehingga hanya sedikit situs yang mengonversinya. Itu akhirnya ditinggalkan setelah pengembangannya menghabiskan sekitar $ 50 juta (Graham, 1970). Tetapi
+sebuah kelompok di Pusat Ilmiah IBM di Cambridge, Massachusetts, menghasilkan sistem yang sangat berbeda yang akhirnya diterima IBM sebagai sebuah produk. Turunan liniernya, disebut z/VM, sekarang banyak digunakan pada mainframe IBM saat ini,
+zSeries, yang banyak digunakan di pusat data perusahaan besar, misalnya, sebagai
+server e-commerce yang menangani ratusan atau ribuan transaksi per detik
+dan menggunakan database yang ukurannya mencapai jutaan gigabyte.
+VM/370
+Sistem ini, awalnya bernama CP/CMS dan kemudian berganti nama menjadi VM/370 (Seawright
+dan MacKinnon, 1979), didasarkan pada pengamatan yang cerdik: sistem pembagian waktu
+menyediakan (1) multiprogramming dan (2) mesin yang diperluas dengan antarmuka yang lebih nyaman daripada perangkat keras biasa. Inti dari VM/370 adalah untuk sepenuhnya
+memisahkan kedua fungsi tersebut.
+Jantung dari sistem, yang dikenal sebagai monitor mesin virtual, berjalan di
+perangkat keras kosong dan melakukan multiprogramming, menyediakan tidak hanya satu, tetapi beberapa mesin virtual ke lapisan berikutnya, seperti yang ditunjukkan pada Gambar. 1-28. Namun, tidak seperti semua
+sistem operasi lain, mesin virtual ini bukan mesin yang diperluas, dengan
+file dan fitur bagus lainnya. Sebaliknya, mereka adalah salinan persis dari perangkat keras kosong, termasuk mode kernel/pengguna, I/O, interupsi, dan segala sesuatu yang dimiliki mesin sebenarnya.
+
+![](Gambar/27.png)
+
+Karena setiap mesin virtual identik dengan perangkat keras yang sebenarnya, masing-masing dapat
+menjalankan sistem operasi apa pun yang akan berjalan langsung pada perangkat keras kosong. Mesin virtual yang berbeda dapat, dan sering dilakukan, menjalankan sistem operasi yang berbeda. Pada sistem IBM VM/370 asli, beberapa menjalankan OS/360 atau salah satu dari kumpulan besar lainnya atau sistem operasi pemrosesan transaksi, sementara yang lain menjalankan pengguna tunggal, interaktif
+sistem yang disebut CMS (Conversational Monitor System) untuk pembagian waktu interaktif
+pengguna. Yang terakhir ini populer di kalangan programmer.
+Ketika program CMS mengeksekusi panggilan sistem, panggilan itu terjebak ke sistem operasi di mesin virtualnya sendiri, bukan ke VM/370, seperti yang akan terjadi.
+berjalan di mesin nyata alih-alih yang virtual. CMS kemudian mengeluarkan normal
+instruksi I/O perangkat keras untuk membaca disk virtualnya atau apa pun yang diperlukan untuk
+melaksanakan panggilan. Instruksi I/O ini dijebak oleh VM/370, yang kemudian membentuknya sebagai bagian dari simulasi perangkat keras sebenarnya. Dengan benar-benar memisahkan fungsi multiprogramming dan menyediakan mesin yang diperluas, masing-masing
+potongan bisa lebih sederhana, lebih fleksibel, dan lebih mudah dirawat.
+Dalam inkarnasi modernnya, z/VM biasanya digunakan untuk menjalankan beberapa sistem operasi lengkap daripada sistem pengguna tunggal seperti CMS. Misalnya, zSeries mampu menjalankan satu atau lebih mesin virtual Linux
+dengan sistem operasi IBM tradisional.
+Mesin Virtual Ditemukan Kembali
+Sementara IBM telah memiliki produk mesin virtual yang tersedia selama empat dekade, dan
+beberapa perusahaan lain, termasuk Oracle dan Hewlett-Packard, baru-baru ini menambahkan
+dukungan mesin virtual ke server perusahaan kelas atas mereka, gagasan virtualisasi sebagian besar telah diabaikan di dunia PC sampai saat ini. Tapi di masa lalu
+beberapa tahun, kombinasi kebutuhan baru, perangkat lunak baru, dan teknologi baru telah
+digabungkan untuk menjadikannya topik hangat.
+Pertama kebutuhan. Banyak perusahaan secara tradisional menjalankan server email mereka, Web
+server, server FTP, dan server lain pada komputer yang terpisah, terkadang dengan sistem operasi yang berbeda. Mereka melihat virtualisasi sebagai cara untuk menjalankan semuanya di
+mesin yang sama tanpa crash satu server menurunkan sisanya.
+Virtualisasi juga populer di dunia web hosting. Tanpa virtualisasi,
+Pelanggan hosting web dipaksa untuk memilih antara hosting bersama (yang hanya
+memberi mereka akun login di server Web, tetapi tidak ada kontrol atas perangkat lunak server) dan hosting khusus (yang memberi mereka mesin mereka sendiri, yang sangat
+fleksibel tetapi tidak hemat biaya untuk Situs Web kecil hingga menengah). Ketika sebuah web hosting
+perusahaan menawarkan mesin virtual untuk disewa, satu mesin fisik dapat menjalankan banyak
+mesin virtual, yang masing-masing tampak seperti mesin yang lengkap. Pelanggan yang
+menyewa mesin virtual dapat menjalankan sistem operasi dan perangkat lunak apa pun yang mereka inginkan
+untuk, tetapi dengan biaya yang lebih murah dari dedicated server (karena fisik yang sama
+mesin mendukung banyak mesin virtual secara bersamaan).
+Kegunaan lain dari virtualisasi adalah untuk pengguna akhir yang ingin dapat menjalankan dua atau
+lebih banyak sistem operasi pada saat yang sama, katakanlah Windows dan Linux, karena beberapa
+paket aplikasi favorit mereka berjalan di satu dan beberapa berjalan di yang lain. Ini
+situasi diilustrasikan pada Gambar. 1-29 (a), di mana istilah '' monitor mesin virtual ''
+telah berganti nama menjadi hypervisor tipe 1, yang umum digunakan saat ini karena '' monitor mesin virtual '' membutuhkan lebih banyak penekanan tombol daripada yang disiapkan orang
+tahan dengan sekarang. Perhatikan bahwa banyak penulis menggunakan istilah tersebut secara bergantian.
+
+![](Gambar/28.png)
+
+Meskipun tidak ada yang membantah daya tarik mesin virtual saat ini, masalahnya
+kemudian adalah implementasi. Untuk menjalankan perangkat lunak mesin virtual di komputer,
+CPU-nya harus dapat divirtualisasikan (Popek dan Goldberg, 1974). Singkatnya, ini dia
+masalah. Ketika sistem operasi berjalan pada mesin virtual (di user
+mode) mengeksekusi instruksi istimewa, seperti memodifikasi PSW atau melakukan I/O,
+adalah penting bahwa perangkap perangkat keras ke monitor mesin virtual sehingga instruksi dapat ditiru dalam perangkat lunak. Pada beberapa CPU—terutama Pentium, pendahulunya, dan klonnya—berusaha mengeksekusi instruksi yang diistimewakan dalam mode pengguna
+diabaikan begitu saja. Properti ini tidak memungkinkan untuk memiliki mesin virtual di sini
+hardware, yang menjelaskan kurangnya minat di dunia x86. Tentu saja, ada
+adalah penerjemah untuk Pentium, seperti Bochs, yang berjalan di Pentium, tetapi dengan
+kehilangan kinerja satu hingga dua kali lipat, mereka tidak berguna untuk pekerjaan yang serius.
+Situasi ini berubah sebagai akibat dari beberapa proyek penelitian akademis di
+1990-an dan tahun-tahun awal milenium ini, terutama Disco di Stanford (Bugnion et
+al., 1997) dan Xen di Universitas Cambridge (Barham et al., 2003). Penelitian ini
+makalah mengarah ke beberapa produk komersial (mis., VMware Workstation dan Xen)
+dan kebangkitan minat pada mesin virtual. Selain VMware dan Xen, populer
+hypervisor hari ini termasuk KVM (untuk kernel Linux), VirtualBox (oleh Oracle),
+dan Hyper-V (oleh Microsoft).
+Beberapa proyek penelitian awal ini meningkatkan kinerja dibandingkan penerjemah seperti Bochs dengan menerjemahkan blok kode dengan cepat, menyimpannya dalam cache internal, dan kemudian menggunakannya kembali jika dieksekusi lagi. Ini meningkatkan
+kinerja jauh, dan menyebabkan apa yang kita sebut simulator mesin, sebagai
+ditunjukkan pada Gambar. 1-29 (b). Namun, meskipun teknik ini, yang dikenal sebagai terjemahan biner, membantu memperbaiki keadaan, sistem yang dihasilkan, meskipun cukup baik untuk mempublikasikan makalah tentang konferensi akademik, masih belum cukup cepat untuk digunakan dalam
+lingkungan komersial di mana kinerja sangat penting.Langkah selanjutnya dalam meningkatkan kinerja adalah menambahkan modul kernel yang harus dilakukan
+beberapa pengangkatan berat, seperti ditunjukkan pada Gambar 1-29(c). Dalam praktiknya sekarang, semua hypervisor yang tersedia secara komersial, seperti VMware Workstation, menggunakan strategi hybrid ini
+(dan memiliki banyak perbaikan lainnya juga). Mereka disebut hypervisor tipe 2
+oleh semua orang, jadi kami akan (agak enggan) mengikuti dan menggunakan nama ini di
+sisa buku ini, meskipun kami lebih suka menyebutnya hypervisor tipe 1.7
+untuk mencerminkan fakta bahwa mereka tidak sepenuhnya program mode pengguna. Dalam Bab. 7, kita
+akan menjelaskan secara rinci cara kerja VMware Workstation dan apa saja variasinya
+potongan lakukan.
+Dalam praktiknya, perbedaan nyata antara hypervisor tipe 1 dan hypervisor tipe 2 adalah bahwa tipe 2 menggunakan sistem operasi host dan sistem filenya untuk
+membuat proses, menyimpan file, dan sebagainya. Hypervisor tipe 1 tidak memiliki dukungan yang mendasari dan harus melakukan semua fungsi ini sendiri.
+Setelah hypervisor tipe 2 dimulai, ia membaca CD-ROM instalasi (atau file gambar CD ROM) untuk sistem operasi tamu yang dipilih dan menginstal OS tamu
+pada disk virtual, yang hanya merupakan file besar di sistem file sistem operasi host.
+Hypervisor tipe 1 tidak dapat melakukan ini karena tidak ada sistem operasi host untuk
+menyimpan file di. Mereka harus mengelola penyimpanan mereka sendiri di partisi disk mentah.
+Ketika sistem operasi tamu di-boot, ia melakukan hal yang sama seperti pada
+perangkat keras yang sebenarnya, biasanya memulai beberapa proses latar belakang dan kemudian
+GUI. Bagi pengguna, sistem operasi tamu berperilaku sama seperti ketika
+berjalan di atas bare metal meskipun tidak demikian halnya di sini.
+Pendekatan yang berbeda untuk menangani instruksi kontrol adalah dengan memodifikasi operasi
+sistem untuk menghapusnya. Pendekatan ini bukan virtualisasi sejati, tetapi isasi paravirtual. Kami akan membahas virtualisasi secara lebih rinci di Bab. 7.
+Mesin Virtual Java
+Area lain di mana mesin virtual digunakan, tetapi dengan cara yang agak berbeda
+cara, adalah untuk menjalankan program Java. Ketika Sun Microsystems menemukan bahasa pemrograman Java, ia juga menemukan mesin virtual (yaitu, arsitektur komputer) yang disebut JVM (Java Virtual Machine). Kompiler Java menghasilkan kode
+untuk JVM, yang kemudian biasanya dijalankan oleh penerjemah JVM perangkat lunak. Keuntungan dari pendekatan ini adalah bahwa kode JVM dapat dikirimkan melalui Internet ke
+komputer mana pun yang memiliki juru bahasa JVM dan dijalankan di sana. Jika kompiler telah menghasilkan program biner SPARC atau x86, misalnya, mereka tidak mungkin
+dikirim dan dijalankan di mana saja dengan mudah. (Tentu saja, Sun dapat menghasilkan kompiler yang menghasilkan biner SPARC dan kemudian mendistribusikan penerjemah SPARC, tetapi
+JVM adalah arsitektur yang jauh lebih sederhana untuk ditafsirkan.) Keuntungan lain menggunakan JVM
+adalah bahwa jika penerjemah diterapkan dengan benar, yang tidak sepenuhnya sepele,
+program JVM yang masuk dapat diperiksa keamanannya dan kemudian dijalankan di lingkungan yang dilindungi sehingga tidak dapat mencuri data atau melakukan kerusakan apa pun.
+### 1.7.6 Eksokernel
+Daripada mengkloning mesin yang sebenarnya, seperti yang dilakukan dengan mesin virtual, strategi lain adalah mempartisinya, dengan kata lain, memberi setiap pengguna subset dari sumber daya. Jadi satu mesin virtual mungkin mendapatkan blok disk 0 hingga 1023, yang berikutnya
+mungkin mendapatkan blok 1024 hingga 2047, dan seterusnya.
+Di lapisan bawah, berjalan dalam mode kernel, adalah sebuah program yang disebut exokernel
+(Engler et al., 1995). Tugasnya adalah mengalokasikan sumber daya ke mesin virtual dan kemudian
+periksa upaya untuk menggunakannya untuk memastikan tidak ada mesin yang mencoba menggunakan seseorang
+sumber daya lain. Setiap mesin virtual tingkat pengguna dapat menjalankan sistem operasinya sendiri,
+seperti pada VM/370 dan Pentium virtual 8086s, kecuali bahwa masing-masing dibatasi untuk
+hanya menggunakan sumber daya yang telah diminta dan telah dialokasikan.
+Keuntungan dari skema exokernel adalah menghemat lapisan pemetaan. Di
+desain lainnya, setiap mesin virtual menganggapnya memiliki disk sendiri, dengan blok berjalan dari 0 hingga maksimum, sehingga monitor mesin virtual harus mempertahankan
+tabel untuk memetakan ulang alamat disk (dan semua sumber daya lainnya). Dengan exokernel, ini
+pemetaan ulang tidak diperlukan. Exokernel hanya perlu melacak mesin virtual mana yang telah ditetapkan sumber dayanya. Cara ini masih memiliki keunggulan
+memisahkan multiprogramming (dalam exokernel) dari sistem operasi pengguna
+kode (di ruang pengguna), tetapi dengan overhead yang lebih sedikit, karena yang harus dilakukan exokernel adalah
+jauhkan mesin virtual dari rambut masing-masing.
+## 1.8 DUNIA MENURUT C
+Sistem operasi biasanya adalah program C (atau kadang-kadang C++) besar yang terdiri dari banyak bagian yang ditulis oleh banyak pemrogram. Lingkungan yang digunakan untuk
+mengembangkan sistem operasi sangat berbeda dari apa yang digunakan oleh individu (seperti siswa) ketika menulis program Java kecil. Bagian ini merupakan upaya untuk
+memberikan pengantar yang sangat singkat ke dunia penulisan sistem operasi untuk programmer Java atau Python waktu kecil.
+### 1.8.1 Bahasa C
+Ini bukan panduan untuk C, tetapi ringkasan singkat dari beberapa perbedaan utama
+antara C dan bahasa seperti Python dan terutama Java. Java didasarkan pada C, jadi
+banyak persamaan diantara keduanya. Python agak berbeda, tapi tetap saja
+cukup mirip. Untuk kenyamanan, kami fokus pada Java. Java, Python, dan C semuanya
+bahasa imperatif dengan tipe data, variabel, dan pernyataan kontrol, misalnya. Tipe data primitif dalam C adalah bilangan bulat (termasuk yang pendek dan panjang),
+karakter, dan angka floating-point. Tipe data komposit dapat dibangun
+menggunakan array, struktur, dan serikat pekerja. Pernyataan kontrol dalam C mirip dengan
+yang ada di Java, termasuk pernyataan if, switch, for, dan while. Fungsi dan parameter kira-kira sama di kedua bahasa Salah satu fitur C yang tidak dimiliki Java dan Python adalah pointer eksplisit. Sebuah penunjuk
+adalah variabel yang menunjuk ke (yaitu, berisi alamat) variabel atau struktur data.
+Perhatikan pernyataan
+karakter c1, c2, *p;
+c1 = 'c';
+p = &c1;
+c2 = *p;
+yang mendeklarasikan c1 dan c2 sebagai variabel karakter dan p sebagai variabel yang menunjuk
+untuk (yaitu, berisi alamat) karakter. Tugas pertama menyimpan ASCII
+kode untuk karakter ''c'' dalam variabel c1. Yang kedua memberikan alamat
+dari c1 ke variabel pointer p. Yang ketiga menetapkan isi variabel
+ditunjuk oleh p ke variabel c2, jadi setelah pernyataan ini dieksekusi, c2 juga
+berisi kode ASCII untuk ''c''. Secara teori, pointer diketik, jadi Anda tidak seharusnya menetapkan alamat nomor floating-point ke pointer karakter, tetapi dalam
+kompiler praktik menerima tugas seperti itu, meskipun terkadang dengan peringatan.
+Pointer adalah konstruksi yang sangat kuat, tetapi juga merupakan sumber kesalahan yang hebat saat digunakan
+sembarangan.
+Beberapa hal yang tidak dimiliki C termasuk string, utas, paket,
+kelas, objek, keamanan tipe, dan pengumpulan sampah. Yang terakhir adalah penghenti pertunjukan
+untuk sistem operasi. Semua penyimpanan di C dialokasikan secara statis atau eksplisit dan
+dirilis oleh programmer, biasanya dengan fungsi library malloc dan gratis. Dia
+adalah properti terakhir — kontrol programmer total atas memori — bersama dengan eksplisit
+pointer yang membuat C menarik untuk menulis sistem operasi. Sistem operasi
+pada dasarnya adalah sistem waktu nyata sampai batas tertentu, bahkan untuk tujuan umum. Kapan
+interupsi terjadi, sistem operasi mungkin hanya memiliki beberapa mikrodetik untuk
+melakukan beberapa tindakan atau kehilangan informasi penting. Memiliki tendangan pengumpul sampah
+di saat yang sewenang-wenang tidak dapat ditoleransi.
+### 1.8.2 File Tajuk
+Sebuah proyek sistem operasi umumnya terdiri dari sejumlah direktori,
+masing-masing berisi banyak file .c yang berisi kode untuk beberapa bagian sistem,
+bersama dengan beberapa file header .h yang berisi deklarasi dan definisi yang digunakan oleh
+satu atau lebih file kode. File header juga dapat menyertakan makro sederhana, seperti
+#tentukan UKURAN BUFFER 4096
+yang memungkinkan programmer untuk memberi nama konstanta, sehingga ketika BUFFER SIZE adalah
+digunakan dalam kode, itu diganti selama kompilasi dengan nomor 4096. Baik C
+praktik pemrograman adalah memberi nama setiap konstanta kecuali 0, 1, dan 1, dan beberapa kali bahkan mereka. Makro dapat memiliki parameter, seperti
+#define max(a, b) (a > b ? a : b)
+yang memungkinkan programmer untuk menulis i = maks(j, k+1)
+dan dapatkan
+i = (j > k+1 ? j : k+1)
+untuk menyimpan yang lebih besar dari j dan k+1 di i. Header juga dapat berisi kompilasi bersyarat, misalnya
+#ifdef X86
+int int ack();
+#berakhir jika
+yang dikompilasi menjadi panggilan ke fungsi intel int ack jika makro X86 didefinisikan
+dan tidak ada yang sebaliknya. Kompilasi bersyarat banyak digunakan untuk mengisolasi kode yang bergantung pada arsitektur sehingga kode tertentu dimasukkan hanya ketika sistem dikompilasi pada X86, kode lain dimasukkan hanya ketika sistem dikompilasi pada
+SPARK, dan sebagainya. File .c dapat secara fisik menyertakan nol atau lebih file header menggunakan
+#sertakan arahan. Ada juga banyak file header yang umum untuk hampir
+setiap .c dan disimpan dalam direktori pusat.
+### 1.8.3 Proyek Pemrograman Besar
+Untuk membangun sistem operasi, setiap .c dikompilasi menjadi file objek oleh C
+penyusun. File objek, yang memiliki akhiran .o, berisi instruksi biner untuk
+mesin sasaran. Mereka nantinya akan langsung dieksekusi oleh CPU. Tidak ada apa-apa
+seperti kode byte Java atau kode byte Python di dunia C.
+Pass pertama dari compiler C disebut preprocessor C. Saat membaca masing-masing
+.c file, setiap kali mengenai direktif #include, ia pergi dan mendapatkan file header bernama
+di dalamnya dan memprosesnya, memperluas makro, menangani kompilasi bersyarat (dan
+hal-hal tertentu lainnya) dan meneruskan hasilnya ke pass kompiler berikutnya seolah-olah
+mereka secara fisik disertakan.
+Karena sistem operasi sangat besar (lima juta baris kode tidak
+tidak biasa), harus mengkompilasi ulang semuanya setiap kali satu file diubah akan
+menjadi tak tertahankan. Di sisi lain, mengubah file header kunci yang disertakan dalam
+ribuan file lain memang membutuhkan kompilasi ulang file-file itu. Melacak
+file objek mana yang bergantung pada file header mana yang benar-benar tidak dapat dikelola tanpa bantuan.
+Untungnya, komputer sangat pandai dalam hal semacam ini. Di UNIX
+sistem, ada program yang disebut make (dengan banyak varian seperti gmake,
+pmake, dll.) yang membaca Makefile, yang memberi tahu file mana yang bergantung pada
+file lain yang mana. Apa yang dilakukan adalah melihat file objek mana yang diperlukan untuk membangun
+biner sistem operasi dan untuk masing-masing, periksa untuk melihat apakah ada file yang bergantung
+on (kode dan header) telah dimodifikasi setelah terakhir kali file objek dibuat. Jika demikian, file objek itu harus dikompilasi ulang. Ketika membuat memiliki
+menentukan file .c mana yang harus dikompilasi ulang, ia kemudian memanggil kompiler C untuk mengkompilasi ulang mereka, sehingga mengurangi jumlah kompilasi ke minimum.
+Dalam proyek besar, membuat Makefile rawan kesalahan, jadi ada alat yang melakukannya
+secara otomatis.
+Setelah semua file .o siap, mereka diteruskan ke program yang disebut linker to
+menggabungkan semuanya menjadi satu file biner yang dapat dieksekusi. Setiap fungsi perpustakaan yang dipimpin juga disertakan pada titik ini, referensi interfungsi diselesaikan, dan alamat mesin dipindahkan sesuai kebutuhan. Ketika linker selesai, hasilnya adalah
+program yang dapat dieksekusi, secara tradisional disebut a.out pada sistem UNIX. Berbagai
+komponen dari proses ini diilustrasikan pada Gambar 1-30 untuk program dengan tiga C
+file dan dua file header. Meskipun kami telah membahas pengembangan sistem operasi di sini, semua ini berlaku untuk mengembangkan program besar apa pun.
+
+![](Gambar/29.png)
+
+
+### 1.8.4 Model Waktu Berjalan
+Setelah biner sistem operasi telah dihubungkan, komputer dapat
+reboot dan sistem operasi baru dimulai. Setelah berjalan, mungkin secara dinamis
+memuat potongan yang tidak disertakan secara statis dalam biner seperti driver perangkat dan sistem file. Pada saat dijalankan sistem operasi dapat terdiri dari beberapa segmen, untuk teks (kode program), data, dan tumpukan. Segmen teks adalah
+biasanya tidak berubah, tidak berubah selama eksekusi. Segmen data dimulai
+pada ukuran tertentu dan diinisialisasi dengan nilai tertentu, tetapi dapat berubah dan tumbuh sebagai
+perlu. Tumpukan awalnya kosong tetapi tumbuh dan menyusut saat fungsi disebut
+dan kembali dari. Seringkali segmen teks ditempatkan di dekat bagian bawah memori,
+segmen data tepat di atasnya, dengan kemampuan untuk tumbuh ke atas, dan segmen tumpukan pada alamat virtual yang tinggi, dengan kemampuan untuk tumbuh ke bawah, tetapi berbeda
+sistem bekerja secara berbeda.
+Dalam semua kasus, kode sistem operasi dijalankan langsung oleh perangkat keras,
+tanpa penerjemah dan kompilasi just-in-time, seperti biasa dengan Java.
