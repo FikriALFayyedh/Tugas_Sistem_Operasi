@@ -1708,6 +1708,7 @@ Organisasi ini menyarankan struktur dasar untuk sistem operasi:
 1. Program utama yang memanggil prosedur layanan yang diminta.
 2. Seperangkat prosedur layanan yang melakukan panggilan sistem.
 3. Seperangkat prosedur utilitas yang membantu prosedur pelayanan.
+   
 Dalam model ini, untuk setiap panggilan sistem ada satu prosedur layanan yang menangani
 itu dan mengeksekusinya. Prosedur utilitas melakukan hal-hal yang diperlukan oleh beberapa prosedur layanan, seperti mengambil data dari program pengguna. Divisi ini
 prosedur menjadi tiga lapisan ditunjukkan pada Gambar. 1-24.
@@ -2082,3 +2083,227 @@ segmen data tepat di atasnya, dengan kemampuan untuk tumbuh ke atas, dan segmen 
 sistem bekerja secara berbeda.
 Dalam semua kasus, kode sistem operasi dijalankan langsung oleh perangkat keras,
 tanpa penerjemah dan kompilasi just-in-time, seperti biasa dengan Java.
+## 1.9 PENELITIAN SISTEM OPERASI
+Ilmu komputer adalah bidang yang berkembang pesat dan sulit untuk memprediksi di mana itu
+sedang pergi. Para peneliti di universitas dan laboratorium penelitian industri terus-menerus
+memikirkan ide-ide baru, beberapa di antaranya pergi ke mana-mana tetapi beberapa di antaranya menjadi
+landasan produk masa depan dan memiliki dampak besar pada industri dan pengguna.
+Mengatakan mana yang ternyata lebih mudah dilakukan di belakang daripada secara real time.
+Memisahkan gandum dari sekam sangat sulit karena seringkali membutuhkan waktu 20
+hingga 30 tahun dari ide hingga dampak.
+Misalnya, ketika Presiden Eisenhower mendirikan Badan Proyek Penelitian Lanjutan Departemen Pertahanan (ARPA) pada tahun 1958, ia berusaha untuk mempertahankan
+Tentara dari membunuh Angkatan Laut dan Angkatan Udara atas anggaran penelitian Pentagon. Dia tidak mencoba untuk menciptakan Internet. Tapi salah satu hal yang ARPA lakukan adalah
+mendanai beberapa penelitian universitas tentang konsep packet switching yang saat itu tidak jelas,
+yang mengarah ke jaringan packet-switched eksperimental pertama, ARPANET. Dia
+diluncurkan pada tahun 1969. Tak lama kemudian, jaringan penelitian lain yang didanai ARPA terhubung ke ARPANET, dan Internet pun lahir. Internet kemudian dengan senang hati
+digunakan oleh peneliti akademis untuk mengirim email satu sama lain selama 20 tahun. Dalam
+awal 1990-an, Tim Berners-Lee menemukan World Wide Web di penelitian CERN
+lab di Jenewa dan Marc Andreesen menulis browser grafis untuk itu di Universitas Illinois. Tiba-tiba Internet penuh dengan remaja yang berkicau. Presiden Eisenhower mungkin berguling di kuburannya.
+Penelitian dalam sistem operasi juga telah menyebabkan perubahan dramatis dalam praktik
+sistem. Seperti yang telah kita diskusikan sebelumnya, sistem komputer komersial pertama semuanya
+sistem batch, hingga M.I.T. menemukan pembagian waktu tujuan umum di awal
+1960-an. Komputer semuanya berbasis teks sampai Doug Engelbart menemukan mouse
+dan antarmuka pengguna grafis di Stanford Research Institute pada akhir 1960-an.
+Siapa yang tahu apa yang akan datang selanjutnya?
+Di bagian ini dan di bagian yang sebanding di seluruh buku ini, kami akan mengambil a
+melihat secara singkat beberapa penelitian dalam sistem operasi yang telah terjadi selama 5 hingga 10 tahun terakhir, hanya untuk memberi gambaran tentang apa yang mungkin ada di cakrawala. Ini
+pengenalan tentu tidak komprehensif. Hal ini sebagian besar didasarkan pada makalah yang memiliki
+telah diterbitkan di konferensi penelitian teratas karena ide-ide ini setidaknya memiliki
+selamat dari proses peer review yang ketat untuk diterbitkan. Perhatikan bahwa dalam ilmu komputer—berlawanan dengan bidang ilmiah lainnya—kebanyakan penelitian diterbitkan di
+konferensi, bukan di jurnal. Sebagian besar makalah yang dikutip di bagian penelitian adalah:
+diterbitkan oleh ACM, IEEE Computer Society, atau USENIX dan tersedia melalui Internet untuk (siswa) anggota organisasi ini. Untuk informasi lebih lanjut tentang organisasi ini dan perpustakaan digital mereka, lihat
+1. ACM http://www.acm.org
+2. IEEE Computer Society http://www.computer.org
+3. USENIX http://www.usenix.org
+   
+Hampir semua peneliti sistem operasi menyadari bahwa sistem operasi saat ini sangat besar, tidak fleksibel, tidak dapat diandalkan, tidak aman, dan sarat dengan bug, tertentu.
+yang lebih dari yang lain (nama dirahasiakan di sini untuk melindungi yang bersalah). Akibatnya,
+ada banyak penelitian tentang bagaimana membangun sistem operasi yang lebih baik. Pekerjaan baru-baru ini telah dipublikasikan tentang bug dan debugging (Renzelmann et al., 2012; dan Zhou et al
+al., 2012), pemulihan kecelakaan (Correia et al., 2012; Ma et al., 2013; Ongaro et al.,
+2011; dan Yeh dan Cheng, 2012), manajemen energi (Pathak et al., 2012; Pet rucci dan Loques, 2012; dan Shen et al., 2013), sistem file dan penyimpanan (Elnably
+dan Wang, 2012; Nightingale dkk., 2012; dan Zhang et al., 2013a), I/O kinerja tinggi (De Bruijn et al., 2011; Li et al., 2013a; dan Rizzo, 2012), hyper threading dan multithreading (Liu et al., 2011), pembaruan langsung (Giuffrida et al., 2013),
+mengelola GPU (Rossbach et al., 2011), manajemen memori (Jantz et al., 2013;
+dan Jeong et al., 2013), sistem operasi multicore (Baumann et al., 2009; Kaprit sos, 2012; Lachaize et al., 2012; dan Wentzlaff et al., 2012), sistem operasi yang benar (Elphinstone et al. al., 2007; Yang dkk., 2006; dan Klein dkk., 2009), keandalan sistem operasi (Hruby dkk., 2012; Ryzhyk dkk., 2009, 2011 dan Zheng dkk.
+al., 2012), privasi dan keamanan (Dunn et al., 2012; Giuffrida et al., 2012; Li et al.,
+2013b; Lorch dkk., 2013; Ortolani dan Crispo, 2012; Slowinska dkk., 2012; dan
+Ur et al., 2012), pemantauan penggunaan dan kinerja (Harter et al, 2012; dan Ravin dranath et al., 2012), dan virtualisasi (Agesen et al., 2012; Ben-Yehuda et al.,
+2010; Colp et al., 2011; Dai dkk., 2013; Tarasov dkk., 2013; dan Williams dkk.,
+1)    di antara banyak topik lainnya.
+
+## 1.10 GARIS BESAR DARI BUKU INI
+Kami sekarang telah menyelesaikan pengenalan kami dan pandangan menyeluruh tentang operasi
+sistem. Saatnya untuk turun ke rincian. Seperti yang sudah disebutkan, dari sudut pandang programmer, tujuan utama dari sistem operasi adalah untuk menyediakan beberapa abstraksi utama, yang paling penting adalah proses dan utas, ruang iklan, dan file. Dengan demikian, tiga bab berikutnya dikhususkan untuk ini
+topik kritis.
+Bab 2 adalah tentang proses dan utas. Ini membahas properti mereka dan bagaimana
+mereka berkomunikasi satu sama lain. Ini juga memberikan sejumlah contoh terperinci
+tentang bagaimana komunikasi antarproses bekerja dan bagaimana menghindari beberapa perangkap.
+Dalam Bab. 3 kita akan mempelajari ruang alamat dan tambahannya, manajemen manajemen memori, secara rinci. Topik penting dari memori virtual akan diperiksa, bersama
+dengan konsep yang terkait erat seperti paging dan segmentasi.
+Kemudian, di Bab. 4, kita sampai pada topik yang sangat penting tentang sistem file. Sampai batas tertentu, apa yang dilihat pengguna sebagian besar adalah sistem file. Kami akan melihat keduanya
+antarmuka sistem file dan implementasi sistem file.
+Input/Output dibahas dalam Bab. 5. Konsep kemandirian perangkat dan
+ketergantungan perangkat akan dilihat. Beberapa perangkat penting, termasuk disk,
+keyboard, dan tampilan, akan digunakan sebagai contoh.
+Bab 6 adalah tentang kebuntuan. Kami secara singkat menunjukkan apa kebuntuan dalam hal ini
+bab, tetapi ada banyak lagi yang bisa dikatakan. Cara untuk mencegah atau menghindarinya dibahas.
+Pada titik ini kita akan menyelesaikan studi tentang prinsip-prinsip dasar sistem operasi CPU tunggal. Namun, ada lebih banyak yang bisa dikatakan, terutama tentang topik iklan. Dalam Bab. 7, kami memeriksa virtualisasi. Kami membahas kedua prinsip, dan beberapa solusi virtualisasi yang ada secara rinci. Karena virtualisasi banyak digunakan dalam komputasi awan, kami juga akan melihat awan yang ada.
+Topik lanjutan lainnya adalah sistem multiprosesor, termasuk multicore, paralel
+komputer, dan sistem terdistribusi. Mata pelajaran ini tercakup dalam Bab. 8.
+Subjek yang sangat penting adalah keamanan sistem operasi, yang tercakup dalam
+Bab 9. Di antara topik yang dibahas dalam bab ini adalah ancaman (misalnya, virus dan
+worm), mekanisme perlindungan, dan model keamanan.
+Selanjutnya kita memiliki beberapa studi kasus sistem operasi nyata. Ini adalah UNIX,
+Linux, dan Android (Bab 10), dan Windows 8 (Bab 11). Teks menyimpulkan
+dengan beberapa kebijaksanaan dan pemikiran tentang desain sistem operasi di Bab. 12.
+## 1.11 UNIT METRIK
+Untuk menghindari kebingungan, ada baiknya menyatakan secara eksplisit bahwa dalam buku ini, seperti dalam
+ilmu komputer secara umum, unit metrik digunakan sebagai pengganti bahasa Inggris tradisional
+unit (sistem dua minggu batu-furlong). Awalan metrik utama terdaftar
+pada Gambar 1-31. Awalan biasanya disingkat dengan huruf pertama mereka, dengan
+unit lebih besar dari 1 dikapitalisasi. Jadi database 1-TB menempati 1012 byte dari usia penyimpanan dan jam 100-psec (atau 100-ps) berdetak setiap 10−10 detik. Sejak mili dan
+mikro keduanya dimulai dengan huruf ''m,'' pilihan harus dibuat. Biasanya, '' 'm'' adalah
+untuk mili dan ''μ'' (huruf Yunani mu) adalah untuk mikro.
+
+![](Gambar/30.png)
+
+Perlu juga ditunjukkan bahwa, dalam praktik industri umum, unit untuk
+mengukur ukuran memori memiliki arti yang sedikit berbeda. Ada kilo berarti 210
+(1024) daripada 103 (1000) karena ingatan selalu merupakan kekuatan dua. Jadi
+Memori 1-KB berisi 1024 byte, bukan 1000 byte. Demikian pula, memori 1-MB
+berisi 220 (1.048.576) byte dan memori 1 GB berisi 230 (1.073.741.824)
+byte. Namun, jalur komunikasi 1-Kbps mentransmisikan 1000 bit per detik dan
+LAN 10-Mbps berjalan pada 10.000.000 bit/detik karena kecepatan ini bukan kekuatan
+dua. Sayangnya, banyak orang cenderung mencampuradukkan kedua sistem ini, terutama untuk
+ukuran disk. Untuk menghindari ambiguitas, dalam buku ini, kita akan menggunakan simbol KB, MB, dan
+GB untuk masing-masing 210, 220, dan 230 byte, dan simbol Kbps, Mbps, dan Gbps
+untuk 103
+, 106
+, dan 109 bit/detik, masing-masing.
+## 1.12 RINGKASAN
+Sistem operasi dapat dilihat dari dua sudut pandang: manajer sumber daya dan
+mesin diperpanjang. Dalam tampilan manajer sumber daya, tugas sistem operasi adalah untuk
+mengelola bagian-bagian yang berbeda dari sistem secara efisien. Dalam tampilan mesin yang diperluas,
+tugas sistem adalah menyediakan abstraksi yang lebih nyaman untuk digunakan daripada mesin yang sebenarnya kepada pengguna. Ini termasuk proses, ruang alamat,
+dan file.
+Sistem operasi memiliki sejarah panjang, mulai dari hari-hari ketika mereka menempatkan operator, hingga sistem multiprogramming modern. Sorotan termasuk
+sistem batch awal, sistem multiprogramming, dan sistem komputer pribadi.
+Karena sistem operasi berinteraksi erat dengan perangkat keras, beberapa pengetahuan
+perangkat keras komputer berguna untuk memahaminya. Komputer dibangun dari
+prosesor, memori, dan perangkat I/O. Bagian-bagian ini dihubungkan oleh bus.
+Konsep dasar di mana semua sistem operasi dibangun adalah proses,
+manajemen memori, manajemen I/O, sistem file, dan keamanan. Masing-masing
+akan dibahas pada bab berikutnya.Inti dari setiap sistem operasi adalah kumpulan panggilan sistem yang dapat ditanganinya.
+Ini memberi tahu apa yang sebenarnya dilakukan sistem operasi. Untuk UNIX, kami telah melihat
+empat kelompok panggilan sistem. Kelompok pertama panggilan sistem berhubungan dengan pembuatan dan penghentian proses. Kelompok kedua adalah untuk membaca dan menulis file. Ketiga
+grup adalah untuk manajemen direktori. Kelompok keempat berisi panggilan lain-lain.
+Sistem operasi dapat disusun dalam beberapa cara. Yang paling umum
+adalah sebagai sistem monolitik, hierarki lapisan, mikrokernel, client-server, virtual
+mesin, atau exokernel.
+
+#### MASALAH
+1. Apa dua fungsi utama sistem operasi?
+2. Dalam Bagian 1.4, sembilan jenis sistem operasi dijelaskan. Berikan daftar
+aplikasi untuk masing-masing sistem ini (satu per jenis sistem operasi).
+3. Apa perbedaan antara sistem timesharing dan multiprogramming?
+4. Untuk menggunakan memori cache, memori utama dibagi menjadi baris cache, biasanya 32 atau 64
+byte panjang. Seluruh baris cache di-cache sekaligus. Apa keuntungan dari caching dan?
+seluruh baris alih-alih satu byte atau kata sekaligus?
+5. Pada komputer awal, setiap byte data yang dibaca atau ditulis ditangani oleh CPU (yaitu,
+tidak ada DMA). Apa implikasinya bagi multiprogramming?
+6. Instruksi yang berhubungan dengan pengaksesan perangkat I/O biasanya merupakan instruksi yang diistimewakan, yaitu:
+adalah, mereka dapat dieksekusi dalam mode kernel tetapi tidak dalam mode pengguna. Berikan alasan mengapa ini
+instruksi diistimewakan.
+7. Ide keluarga komputer diperkenalkan pada 1960-an dengan IBM System/360
+mainframe. Apakah ide ini sekarang mati sebagai paku atau masih hidup?
+8. Salah satu alasan GUI pada awalnya lambat untuk diadopsi adalah biaya perangkat keras yang dibutuhkan untuk mendukungnya. Berapa banyak RAM video yang diperlukan untuk mendukung 25-baris × 80-baris
+layar teks karakter monokrom? Berapa harga untuk peta bit warna 24-bit 1200 × 900-piksel? Berapa harga RAM ini pada harga 1980 ($5/KB)? Berapa sekarang?
+9. Ada beberapa tujuan desain dalam membangun sebuah sistem operasi, misalnya resource
+pemanfaatan, ketepatan waktu, ketahanan, dan sebagainya. Berikan contoh dua tujuan desain yang
+mungkin bertentangan satu sama lain.
+10. Apa perbedaan antara kernel dan mode pengguna? Jelaskan bagaimana memiliki dua yang berbeda
+mode membantu dalam merancang sistem operasi.
+11. Disk 255 GB memiliki 65.536 silinder dengan 255 sektor per track dan 512 byte per detik. Berapa banyak piringan dan kepala yang dimiliki disk ini? Dengan asumsi silinder rata-rata
+mencari waktu 11 ms, delay rotasi rata-rata 7 msec dan kecepatan membaca 100 MB/sec,
+hitung waktu rata-rata yang diperlukan untuk membaca 400 KB dari satu sektor.
+12. Manakah dari instruksi berikut yang hanya diperbolehkan dalam mode kernel?
+(a) Nonaktifkan semua interupsi.
+(b) Membaca jam waktu dalam sehari.
+(c) Atur jam waktu dalam sehari.
+(d) Mengubah peta memori.
+13. Pertimbangkan sistem yang memiliki dua CPU, masing-masing CPU memiliki dua utas (hyperthreading).
+Misalkan tiga program, P0, P1, dan P2, dimulai dengan runtime 5, 10 dan 20
+msec, masing-masing. Berapa lama waktu yang dibutuhkan untuk menyelesaikan eksekusi program-program ini?
+Asumsikan bahwa ketiga program 100% terikat CPU, jangan diblokir selama eksekusi,
+dan jangan ubah CPU setelah ditetapkan.
+14. Sebuah komputer memiliki pipa dengan empat tahap. Setiap tahap membutuhkan waktu yang sama untuk melakukannya
+bekerja, yaitu, 1 nsec. Berapa banyak instruksi per detik yang dapat dijalankan mesin ini?
+15. Pertimbangkan sistem komputer yang memiliki memori cache, memori utama (RAM) dan disk,
+dan sistem operasi yang menggunakan memori virtual. Dibutuhkan 1 nsec untuk mengakses sebuah kata
+dari cache, 10 nsec untuk mengakses kata dari RAM, dan 10 ms untuk mengakses kata
+dari disk. Jika hit rate cache adalah 95% dan hit rate memori utama (setelah cache
+miss) adalah 99%, berapa waktu rata-rata untuk mengakses sebuah kata?
+16. Ketika program pengguna membuat panggilan sistem untuk membaca atau menulis file disk, program tersebut menyediakan:
+indikasi file mana yang diinginkan, penunjuk ke buffer data, dan hitungan. Kontrol adalah
+kemudian ditransfer ke sistem operasi, yang memanggil driver yang sesuai. Memperkirakan
+bahwa driver memulai disk dan berhenti sampai terjadi interupsi. Dalam kasus
+membaca dari disk, jelas penelepon harus diblokir (karena ada
+tidak ada data untuk itu). Bagaimana dengan kasus menulis ke disk? Perlu penelepon diblokir
+menunggu penyelesaian transfer disk?
+17. Apa itu instruksi jebakan? Jelaskan kegunaannya dalam sistem operasi!
+18. Mengapa tabel proses dibutuhkan dalam sistem timesharing? Apakah itu juga diperlukan secara pribadi?
+sistem komputer yang menjalankan UNIX atau Windows dengan satu pengguna?
+19. Apakah ada alasan mengapa Anda ingin memasang sistem file pada direktori yang tidak kosong? Jika demikian, apa itu?
+20. Untuk setiap panggilan sistem berikut, berikan kondisi yang menyebabkannya gagal: fork, exec,
+dan batalkan tautan.
+21. Jenis multiplexing (waktu, ruang, atau keduanya) apa yang dapat digunakan untuk berbagi berikut:
+sumber daya: CPU, memori, disk, kartu jaringan, printer, keyboard, dan tampilan?
+22. Bisakah
+hitung = tulis(fd, buffer, nbytes);
+panggilan mengembalikan nilai apa pun dalam hitungan selain nbytes? Jika demikian, mengapa?
+23. File yang deskriptor filenya adalah fd berisi urutan byte berikut: 3, 1, 4, 1, 5,
+9, 2, 6, 5, 3, 5. Panggilan sistem berikut dilakukan:
+lseek(fd, 3, MENCARI SET);
+baca(fd, &buffer, 4);
+di mana panggilan lseek melakukan pencarian ke byte 3 file. Apa yang mengandung buffer setelah
+bacaannya sudah selesai?
+24. Misalkan file 10-MB disimpan pada disk pada track yang sama (track 50) di sektor-sektor berturut-turut. Lengan disk saat ini terletak di atas nomor trek 100. Berapa lama?
+diperlukan untuk mengambil file ini dari disk? Asumsikan bahwa dibutuhkan sekitar 1 ms untuk memindahkan
+lengan dari satu silinder ke silinder berikutnya dan sekitar 5 ms untuk sektor di mana awal
+file disimpan untuk diputar di bawah kepala. Juga, asumsikan bahwa membaca terjadi pada tingkat
+200 MB/dtk.
+25. Apa perbedaan penting antara file khusus blok dan karakter khusus?
+mengajukan?
+26. Dalam contoh yang diberikan pada Gambar. 1-17, prosedur perpustakaan disebut membaca dan sistem
+panggilan itu sendiri disebut baca. Apakah penting bahwa keduanya memiliki nama yang sama? Jika tidak,
+mana yang lebih penting?
+27. Sistem operasi modern memisahkan ruang alamat proses dari memori fisik mesin. Sebutkan dua keuntungan dari desain ini.
+28. Untuk programmer, panggilan sistem terlihat seperti panggilan lain ke prosedur perpustakaan. Apakah itu
+penting bahwa seorang programmer mengetahui prosedur perpustakaan mana yang menghasilkan panggilan sistem?
+Dalam keadaan apa dan mengapa?
+29. Gambar 1-23 menunjukkan bahwa sejumlah panggilan sistem UNIX tidak memiliki ekuivalen API Win32. Untuk setiap panggilan yang terdaftar sebagai tidak memiliki setara Win32, apa konsekuensi bagi seorang programmer untuk mengubah program UNIX untuk dijalankan di bawah Windows?
+30. Sistem operasi portabel adalah sistem yang dapat di-porting dari satu arsitektur sistem ke
+lain tanpa modifikasi apapun. Jelaskan mengapa tidak layak untuk membangun sebuah operasi
+sistem yang benar-benar portabel. Jelaskan dua lapisan tingkat tinggi yang akan Anda miliki di
+merancang sistem operasi yang sangat portabel.
+31. Jelaskan bagaimana pemisahan kebijakan dan mekanisme membantu dalam membangun berbasis mikrokernel
+sistem operasi.
+32. Mesin virtual menjadi sangat populer karena berbagai alasan. Namun demikian,
+mereka memiliki beberapa kelemahan. Nama satu.
+33. Berikut adalah beberapa pertanyaan untuk mempraktikkan konversi satuan:
+(a) Berapa lama nanoyear dalam detik?
+(b) Mikrometer sering disebut mikron. Berapa panjang megamikron?
+(c) Berapa banyak byte yang ada dalam memori 1-PB?
+(d) Massa bumi adalah 6000 yottagram. Apa itu dalam kilogram?
+34. Tulislah sebuah shell yang mirip dengan Gambar 1-19 tetapi berisi kode yang cukup sehingga benar-benar berfungsi
+sehingga Anda dapat mengujinya. Anda juga dapat menambahkan beberapa fitur seperti pengalihan input dan
+output, pipa, dan pekerjaan latar belakang.
+35. Jika Anda memiliki sistem pribadi seperti UNIX (Linux, MINIX 3, FreeBSD, dll.) tersedia
+bahwa Anda dapat crash dan reboot dengan aman, tulis skrip shell yang mencoba membuat
+jumlah proses anak yang tidak terbatas dan amati apa yang terjadi. Sebelum menjalankan
+percobaan, ketik sinkronisasi ke shell untuk menyiram buffer sistem file ke disk untuk menghindari merusak sistem file. Anda juga dapat melakukan eksperimen dengan aman di mesin virtual.
+Catatan: Jangan coba ini pada sistem bersama tanpa terlebih dahulu mendapatkan izin dari administrator sistem. Konsekuensinya akan langsung terlihat sehingga Anda kemungkinan besar akan
+tertangkap dan sanksi mungkin menyusul.
+36. Periksa dan coba interpretasikan isi direktori mirip UNIX atau Windows dengan a
+alat seperti program UNIX od. (Petunjuk: Bagaimana Anda melakukan ini akan tergantung pada apa OS
+memungkinkan. Salah satu trik yang mungkin berhasil adalah membuat direktori pada stik USB dengan satu sistem operasi dan kemudian membaca data perangkat mentah menggunakan sistem operasi berbeda yang
+memungkinkan akses tersebut.)
