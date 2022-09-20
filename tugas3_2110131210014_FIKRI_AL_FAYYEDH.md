@@ -62,6 +62,7 @@ Menyediakan driver: untuk dapat melakukan operasi rinci untuk perangkat keras  M
 ### Linux
 
 ![](Gambar3/3b.png)
+![](Gambar3/3b.png)
 
 
 Dari gambar di atas terdapat beberapa perangkat input dan output yang terhubung.(Device Manajer.)
