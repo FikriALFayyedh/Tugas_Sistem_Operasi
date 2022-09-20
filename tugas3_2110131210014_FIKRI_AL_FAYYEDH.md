@@ -18,7 +18,9 @@ Sistem operasi bertanggung-jawab atas aktivitas-aktivitas yang berkaitan dengan 
 ![](Gambar3/1a.png)
 
 ### Linux
-![](gambar3/1br.png)
+
+![](gambar3/1b.png)
+
 
 dari taks manajer di atas terlihat merupakan manajemen proses yang sedang berlangsung pada aplikasi yang sedang berjalan .contohnya seperti penggunaan CPU,Penggunaan Memory,Pengunaan battery,dll.
 
@@ -58,7 +60,9 @@ Menyediakan driver: untuk dapat melakukan operasi rinci untuk perangkat keras  M
 ![](Gambar3/3a.png)
 
 ### Linux
-![](gambar3/3br.png)
+
+![](gambar3/3b.png)
+
 
 Dari gambar di atas terdapat beberapa perangkat input dan output yang terhubung.(Device Manajer.)
 
