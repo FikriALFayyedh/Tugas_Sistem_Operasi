@@ -17,10 +17,10 @@ mode dan mentransfer control ke sistem operasi.
 
 5. Kontrol akan dikembalikan kepada user program, jika sistem call telah selesai mengerjakan tugasnya.
 
-Keunggulan Sistem Monolitik
+#### Keunggulan Sistem Monolitik
 1) Layanan pada satu ruang alamat memory.terhadap job-job yang ada bisa dilakukan dengan cepat karena berada
 
-Kelemahan Sistem Monolitik
+#### Kelemahan Sistem Monolitik
 1) Pengujian dan penghilangan kesalahan sulit dilakukan karena tidak dapat dipisahkan dan dilokasikan.
 
 2) Sulit dalam menyediakan fasilitas pengamanan. Kurang efisien dalam penggunaan memori dimana setiap computer harus menjalankan kernel yang besar sementara tidak memerlukan seluruh layanan yang disediakan kernel.
@@ -30,12 +30,12 @@ Kelemahan Sistem Monolitik
 ## • Pendekatan Berlapis.
 Sistem operasi dibentuk secara hirarki berdasar lapisan — lapisan, dimana lapisan-lapisan bawa memberi layanan lapisan lebih atas. Lapisan yang paling bawah adalah perangkat keras dan yang paling tinggi adalah user- interface. Sebuah lapisan adalah implementasi dari obyek abstrak yang merupakan enkapsulasi dari data dan operasi yang bisa memanipulasi data tersebut. Struktur berlapis dimaksudkan untuk mengurangi kompleksitas rancangan dan implementasi sistem operasi. Contoh sistem operasi yang menggunakan sistem ini adalah: UNIX termodifikasi, THE, Venus dan OS/2.
 
-Kelebihan Sistem Berlapis
+#### Kelebihan Sistem Berlapis
 1) Memiliki rancangan modular, yaitu sistem dibagi menjadi beberapa modul & tiap modul dirancang secara independen.
 
 2) Pendekatan berlapis menyederhanakan rancangan, spesifikasi dan implementasi sistem operasi.
 
-Kelemahan Sistem Berlapis
+#### Kelemahan Sistem Berlapis
 1) Fungsi-fungsi sistem operasi diberikan ke tiap lapisan secara hati-hati.
 
 C. KERNEL MIKRO (MIKROKERNEL)
@@ -49,12 +49,12 @@ Sistem operasi yang menggunakan micro kernel umumnya secara dramatis memiliki ki
 
 Contoh Sistem operasi yang menggunakan struktur ini adalah : TRU64 UNIX, MacOSX dan QNX.
 
-Kelebihan Kernel Mikro
+#### Kelebihan Kernel Mikro
 1) kemudahan dalam memperluas sistem operasi
 
 2) Mudah untuk diubah ke bentuk arsitektur baru
 
 3) Kode yang kecil dan lebih aman
 
-Kekurangan Kernel Mikro
+#### Kekurangan Kernel Mikro
 1) kinerja akan berkurang selagi bertambahnya fungsi- fungsi yang digunakan.
